@@ -2,8 +2,10 @@ use strict;
 use warnings;
 
 package Math::Polygon;
+
 use Math::Polygon::Calc;
 use Math::Polygon::Clip;
+use Math::Polygon::Transform;
 
 =chapter NAME
 
@@ -128,7 +130,7 @@ sub point(@)
 =method string 
 =cut
 
-sub string() { polygon_string shift->points }
+sub string() { polygon_string(shift->points) }
 
 =method bbox
 Returns a list with four elements: (xmin, ymin, xmax, ymax), which describe
@@ -146,7 +148,7 @@ sub bbox()
     $self->{MP_bbox} = \@bbox;
 }
 
-=function area
+=method area
 Returns the area enclosed by the polygon.  The last point of the list
 must be the same as the first to produce a correct result.  The computed
 result is cached.
@@ -170,6 +172,32 @@ sub isClockwise()
 {   my $self = shift;
     return $self->{MP_clockwise} if defined $self->{MP_clockwise};
     $self->{MP_clockwise} = polygon_is_clockwise $self->points;
+}
+
+=method clockwise
+Make sure the points are in clockwise order.
+=cut
+
+sub clockwise()
+{   my $self = shift;
+    return $self if $self->isClockwise;
+
+    $self->{MP_points}    = [ reverse $self->points ];
+    $self->{MP_clockwise} = 1;
+    $self;
+}
+
+=method counterClockwise
+Make sure the points are in counter-clockwise order.
+=cut
+
+sub counterClockwise()
+{   my $self = shift;
+    return $self unless $self->isClockwise;
+
+    $self->{MP_points}    = [ reverse $self->points ];
+    $self->{MP_clockwise} = 0;
+    $self;
 }
 
 =method perimeter
@@ -246,6 +274,204 @@ sub same($;@)
         $tolerance = shift;
     }
     polygon_same scalar($self->points), $other, $tolerance;
+}
+
+=section Transformations
+
+Implemented in M<Math::Polygon::Transform>: changes on the structure of
+the polygon except clipping.  All functions return a new polygon object
+or undef.
+
+=method resize OPTIONS
+Returns a resized polygon object.
+See M<Math::Polygon::Transform::polygon_resize()>.
+
+=option  scale FLOAT
+=default scale C<1.0>
+Resize the polygon with the indicated factor.  When the factor is larger
+than 1, the resulting polygon with grow, when small it will be reduced in
+size.  The scale will be respective from the center.
+
+=option  xscale FLOAT
+=default xscale <scale>
+Specific scaling factor in the horizontal direction.
+
+=option  yscale FLOAT
+=default yscale <scale>
+Specific scaling factor in the vertical direction.
+
+=option  center POINT
+=default center C<[0,0]>
+
+=cut
+
+sub resize(@)
+{   my $self = shift;
+
+    my $clockwise = $self->{MP_clockwise};
+    if(defined $clockwise)
+    {   my %args   = @_;
+        my $xscale = $args{xscale} || $args{scale} || 1;
+        my $yscale = $args{yscale} || $args{scale} || 1;
+        $clockwise = not $clockwise if $xscale * $yscale < 0;
+    }
+
+    (ref $self)->new
+       ( points    => [ polygon_resize @_, $self->points ]
+       , clockwise => $clockwise
+       # we could save the bbox calculation as well
+       );
+}
+
+=method move OPTIONS
+Returns a moved polygon object: all point are moved over the
+indicated distance.  See M<Math::Polygon::Transform::polygon_move()>.
+
+=option  dx FLOAT
+=default dx 0
+Displacement in the horizontal direction.
+
+=option  dy FLOAT
+=default dy 0
+Displacement in the vertical direction.
+
+=cut
+
+sub move(@)
+{   my $self = shift;
+
+    (ref $self)->new
+       ( points    => [ polygon_move @_, $self->points ]
+       , clockwise => $self->{MP_clockwise}
+       , bbox      => $self->{MP_bbox}
+       );
+}
+
+=method rotate OPTIONS
+Returns a rotated polygon object: all point are moved over the
+indicated distance.  See M<Math::Polygon::Transform::polygon_rotate()>.
+
+=option  degrees FLOAT
+=default degrees 0
+specify rotation angle in degrees (between -180 and 360).
+
+=option  radians FLOAT
+=default radians 0
+specify rotation angle in rads (between -pi and 2*pi)
+
+=option  center  POINT
+=default center  C<[0,0]>
+
+=cut
+
+sub rotate(@)
+{   my $self = shift;
+
+    (ref $self)->new
+       ( points    => [ polygon_rotate @_, $self->points ]
+       , clockwise => $self->{MP_clockwise}
+       # we could save the bbox calculation as well
+       );
+}
+
+=method grid OPTIONS
+Returns a polygon object with the points snapped to grid points.
+See M<Math::Polygon::Transform::polygon_grid()>.
+
+=option  raster FLOAT
+=default raster 1.0
+The raster size, which determines the points to round to.  The origin
+C<[0,0]> is always on a grid-point.  When the raster value is zero,
+no transformation will take place.
+
+=cut
+
+sub grid(@)
+{   my $self = shift;
+
+    (ref $self)->new
+       ( points    => [ polygon_grid @_, $self->points ]
+       , clockwise => $self->{MP_clockwise}  # probably
+       # we could save the bbox calculation as well
+       );
+}
+
+=method mirror OPTIONS
+Mirror the polygon in a line.  Only one of the options can be provided.
+Some programs call this "flip" or "flop".
+
+=option  x FLOAT
+=default x C<undef>
+Mirror in the line C<x=value>, which means that C<y> stays unchanged.
+
+=option  y FLOAT
+=default y C<undef>
+Mirror in the line C<y=value>, which means that C<x> stays unchanged.
+
+=option  rc FLOAT
+=default rc C<undef>
+Description of the line which is used to mirror in. The line is
+C<y= rc*x+b>.  The C<rc> equals C<-dy/dx>, the firing angle.  If
+C<undef> is explicitly specified then C<b> is used as constant x: it's
+a vertical mirror.
+
+=option  b  FLOAT
+=default b  C<0>
+Only used in combination with option C<rc> to describe a line.
+
+=option  line [POINT, POINT]
+=default line <undef>
+Alternative way to specify the mirror line.  The C<rc> and C<b> are
+computed from the two points of the line.
+=cut
+
+sub mirror(@)
+{   my $self = shift;
+
+    my $clockwise = $self->{MP_clockwise};
+    $clockwise    = not $clockwise if defined $clockwise;
+
+    (ref $self)->new
+       ( points    => [ polygon_grid @_, $self->points ]
+       , clockwise => $clockwise
+       # we could save the bbox calculation as well
+       );
+}
+
+=method simplify OPTIONS
+Returns a polygon object where points are removed.
+See M<Math::Polygon::Transform::polygon_simplify()>.
+
+=option  same FLOAT
+=default same C<0.0001>
+The distance between two points to be considered "the same" point.  The value
+is used as radius of the circle.
+
+=option  slope FLOAT
+=default slope C<undef>
+With three points X(n),X(n+1),X(n+2), the point X(n+1) will be removed if
+the length of the path over all three points is less than C<slope> longer
+than the direct path between X(n) and X(n+2).
+
+The slope will not be removed around the starting point of the polygon.
+Removing points will change the area of the polygon.
+
+=option  max_points INTEGER
+=default max_points C<undef>
+First, C<same> and C<slope> reduce the number of points.  Then, if there
+are still more than the specified number of points left, the points with
+the widest angles will be removed until the specified maximum number is
+reached.
+=cut
+
+sub simplify(@)
+{   my $self = shift;
+
+    (ref $self)->new
+       ( points    => [ polygon_simplify @_, $self->points ]
+       , clockwise => $self->{MP_clockwise}  # probably
+       , bbox      => $self->{MP_bbox}       # protect bounds
+       );
 }
 
 =section Clipping

@@ -1,6 +1,12 @@
 Revision history for Perl extension Math::Polygon
 
-version 0.001:
+version 0.002: Fri Nov 12 16:05:18 CET 2004
+
+	- Created Math::Polygon::Transform, and added loads of test for it
+
+	- Math::Polygon added interface to transform routines
+
+version 0.001: Wed Sep  1 17:45:51 CEST 2004
 
 	- Initial version
 

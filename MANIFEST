@@ -6,6 +6,7 @@ lib/Math/Polygon.pm
 lib/Math/Polygon/Calc.pm
 lib/Math/Polygon/Clip.pm
 lib/Math/Polygon/Surface.pm
+lib/Math/Polygon/Transform.pm
 mkdist
 mkdoc
 t/10box.t
@@ -15,6 +16,12 @@ t/13rot.t
 t/30cross.t
 t/31clipl.t
 t/32clipf1.t
+t/40resize.t
+t/41move.t
+t/42rotate.t
+t/43grid.t
+t/44mirror.t
+t/45simple.t
 t/90polygon.t
 t/91surface.t
 version

@@ -69,7 +69,7 @@ sub polygon_fill_clip1($@)
 	push @cropped, [$x, $y];
     }
 
-    polygon_beautify({despike => 1}, @cropped);
+    polygon_beautify {despike => 1}, @cropped;
 }
 
 =function polygon_line_clip ARRAY-BOX, LIST-OF-POINTS

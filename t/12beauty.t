@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 123;
+use Test::More tests => 24;
 
 use lib '../lib';
 use Math::Polygon::Calc;
@@ -14,13 +14,10 @@ sub compare_poly($$$)
     cmp_ok(scalar(@$got), '==', scalar(@$want), "nr points, $text");
     return unless @$want;
 
-    my @got  = polygon_start_minxy @$got;
-    my @want = polygon_start_minxy @$want;
+    my $gotp  = polygon_string polygon_start_minxy @$got;
+    my $wantp = polygon_string polygon_start_minxy @$want;
 
-    for(my $i = 0; $i < @$got; $i++)
-    {   cmp_ok($got[$i][0], '==', $want[$i][0], "X $i");
-	cmp_ok($got[$i][1], '==', $want[$i][1], "Y $i");
-    }
+    is($gotp, $wantp);
 }
 
 #
