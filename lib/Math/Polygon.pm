@@ -211,9 +211,10 @@ Function M<Math::Polygon::Calc::polygon_perimeter()>.
 sub perimeter() { polygon_perimeter shift->points }
 
 =method startMinXY
-Returns a new polygon object, where the point with the smallest x coordinate
-is at the start (and end, of course).  If more points share the x coordinate,
-the smallest y-values will make the final decission.
+Returns a new polygon object, where the points are rotated in such a way
+that the point which is losest to the left-bottom point of the bouding
+box has become the first.
+
 Function M<Math::Polygon::Calc::polygon_start_minxy()>.
 =cut
 
@@ -274,6 +275,16 @@ sub same($;@)
         $tolerance = shift;
     }
     polygon_same scalar($self->points), $other, $tolerance;
+}
+
+=method contains POINT
+Returns a truth value indicating whether the point is inside the polygon
+or not.  On the edge is inside.
+=cut
+
+sub contains($)
+{   my ($self, $point) = @_;
+    polygon_contains_point($point, shift->points);
 }
 
 =section Transformations

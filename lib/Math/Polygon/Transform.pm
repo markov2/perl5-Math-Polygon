@@ -304,52 +304,64 @@ sub polygon_simplify(@)
     my $changes     = 1;
 
     while($changes && @_)
-    {   $changes    = 0;
+    {
+        $changes    = 0;
+        my @new;
+
         my $p       = shift;
-        my @new     = $p;
-        my ($x, $y) = @$p;
 
         while(@_)
-        {   my ($nx, $ny) = @{ $p = shift }; 
+        {   my ($x, $y)   = @$p;
 
+            my ($nx, $ny) = @{$_[0]}; 
             my $d01 = sqrt(($nx-$x)*($nx-$x) + ($ny-$y)*($ny-$y));
             if($d01 < $same)
-            {   # point within threshold: ignore next
+            {   # point within threshold: middle
                 $changes++;
+                push @new, [ ($x+$nx)/2, ($y+$ny)/2 ];
+                shift;            # remove next
+                $p       = shift; # 2nd as new current
                 next;
             }
 
-            unless(@_ && defined $slope)
-            {  push @new, $p;
-               ($x, $y) = ($nx, $ny);
+            unless(@_ >= 2 && defined $slope)
+            {  push @new, $p;     # keep this
+               $p       = shift;  # check next
                next;
             }
 
-            my ($sx,$sy) = @{$_[0]};
+            my ($sx,$sy) = @{$_[1]};
             my $d12 = sqrt(($sx-$nx)*($sx-$nx) + ($sy-$ny)*($sy-$ny));
             my $d02 = sqrt(($sx-$x) *($sx-$x)  + ($sy-$y) *($sy-$y) );
 
             if($d01 + $d12 <= $d02 + $slope)
-            {   $changes++;
-                $p      = shift;  # jump over next
-                ($nx, $ny) = ($sx, $sy);
+            {   # three points nearly on a line, remove middle
+                $changes++;
+                push @new, $p, $_[1];
+                shift; shift;
+                $p         = shift;  # jump over next
+                next;
             }
-            elsif(@_ > 1 && abs($d01-$d12-$d02) < $slope)
-            {   # possibly a Z shape
-                my ($tx,$ty) = @{$_[1]};
+
+            if(@_ > 2 && abs($d01-$d12-$d02) < $slope)
+            {   # check possibly a Z shape
+                my ($tx,$ty) = @{$_[2]};
                 my $d03 = sqrt(($tx-$x) *($tx-$x)  + ($ty-$y) *($ty-$y));
                 my $d13 = sqrt(($tx-$nx)*($tx-$nx) + ($ty-$ny)*($ty-$ny));
 
                 if($d01 - $d13 <= $d03 + $slope)
                 {   $changes++;
-                    shift; $p = shift;  # jump over next two!
-                    ($nx, $ny) = ($tx, $ty);
+                    push @new, $p, $_[2];  # accept 1st and 4th
+                    splice @_, 0, 3;       # jump over handled three!
+                    $p = shift;
+                    next;
                 }
             }
 
-            push @new, $p;
-            ($x, $y) = ($nx, $ny);
+            push @new, $p;   # nothing for this one.
+            $p = shift;
         }
+        push @new, $p if defined $p;
 
         unshift @new, $new[-1]    # be sure to keep ring closed
            if $is_ring && ($new[0][0]!=$new[-1][0] || $new[0][1]!=$new[-1][1]);

@@ -1,5 +1,19 @@
 Revision history for Perl extension Math::Polygon
 
+version 0.003: Fri Dec  3 13:20:37 CET 2004
+
+	- simplify will average close points.  Before, points could get
+	  removed one after the other, until points over a long distance
+	  were stripped.  That will not happen anymore.
+
+	- polygon_start_minxy/Math::Polygon::startMinXY now returns the
+	  point most close to (xmin,ymin) of the bounding box first. Was
+	  the point with the smallest x.
+
+	- new method Math::Polygon::contains(point) and function
+	  Math::Polygon::Calc::polygon_contains_point(point, @poly)
+	  with tests in t/14contains.t
+
 version 0.002: Fri Nov 12 16:05:18 CET 2004
 
 	- Created Math::Polygon::Transform, and added loads of test for it

@@ -5,7 +5,7 @@ use warnings;
 
 use Test::More tests => 11;
 
-use lib '../lib';
+use lib '../lib', 'lib';
 use Math::Polygon::Transform;
 use Math::Polygon::Calc       qw/polygon_string/;
 
@@ -21,12 +21,12 @@ is( polygon_string(polygon_simplify @p)
   );
 
 is( polygon_string(polygon_simplify same => 0.15, @p)
-  , "[0,0.1], [1,1], [2,2], [1.9,1.85], [0,0.1]"
+  , "[0,0.05], [1,1], [2.05,2.05], [1.9,1.85], [0,0.05]"
   , 'resolution 0.11'
   );
 
 is( polygon_string(polygon_simplify same => 0.25, @p)
-  , "[0,0.1], [1,1], [2,2], [0,0.1]"
+  , "[0,0.05], [1,1], [1.975,1.95], [0,0.05]"
   , 'resolution 0.11'
   );
 
@@ -38,12 +38,12 @@ is( polygon_string(polygon_simplify @p)
   );
 
 is( polygon_string(polygon_simplify same => 0.15, @p)
-  , "[0,0], [1,1], [2,2], [1.9,1.85], [0,0.1]"
+  , "[0,0], [1,1], [2.05,2.05], [1.9,1.85], [0,0.1]"
   , 'resolution 0.11 no ring'
   );
 
 is( polygon_string(polygon_simplify same => 0.25, @p)
-  , "[0,0], [1,1], [2,2], [0,0.1]"
+  , "[0,0], [1,1], [1.975,1.95], [0,0.1]"
   , 'resolution 0.11 no ring'
   );
 

@@ -5,7 +5,7 @@ use warnings;
 
 use Test::More tests => 24;
 
-use lib '../lib';
+use lib '../lib', 'lib';
 use Math::Polygon::Calc;
 
 sub compare_poly($$$)
