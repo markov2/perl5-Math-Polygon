@@ -316,9 +316,12 @@ sub polygon_simplify(@)
             my ($nx, $ny) = @{$_[0]}; 
             my $d01 = sqrt(($nx-$x)*($nx-$x) + ($ny-$y)*($ny-$y));
             if($d01 < $same)
-            {   # point within threshold: middle
-                $changes++;
-                push @new, [ ($x+$nx)/2, ($y+$ny)/2 ];
+            {   $changes++;
+
+                # point within threshold: middle, unless we are at the
+                # start of the polygo description: that one has a slight
+                # preference, to avoid an endless loop.
+                push @new, !@new ? [ ($x,$y) ] : [ ($x+$nx)/2, ($y+$ny)/2 ];
                 shift;            # remove next
                 $p       = shift; # 2nd as new current
                 next;

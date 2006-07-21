@@ -125,12 +125,7 @@ sub point(@)
     wantarray ? @{$points}[@_] : $points->[shift];
 }
 
-=section Simple calculations
-
-=method string 
-=cut
-
-sub string() { polygon_string(shift->points) }
+=section Geometry
 
 =method bbox
 Returns a list with four elements: (xmin, ymin, xmax, ymax), which describe
@@ -146,6 +141,7 @@ sub bbox()
 
     my @bbox = polygon_bbox $self->points;
     $self->{MP_bbox} = \@bbox;
+    @bbox;
 }
 
 =method area
@@ -513,5 +509,14 @@ sub fillClip1($$$$)
     my @clip = polygon_fill_clip1 \@bbox, $self->points;
     $self->new(points => \@clip);
 }
+
+=chapter Display
+
+=method string 
+=cut
+
+sub string() { polygon_string(shift->points) }
+
+
 
 1;

@@ -1,5 +1,14 @@
 Revision history for Perl extension Math::Polygon
 
+version 0.004: Fri Jul 21 10:17:44 CEST 2006
+
+	- simplify() could get in an endless loop.
+
+	- doc updates to fit into Geo::Point doc-set.
+
+	- ring detection failed in Calc::polygon_start_minxy(), reported
+	  by [mtworek]
+
 version 0.003: Fri Dec  3 13:20:37 CET 2004
 
 	- simplify will average close points.  Before, points could get

@@ -145,7 +145,7 @@ corner of the boundind box is made first.
 
 sub polygon_start_minxy(@)
 {   return @_ if @_ <= 1;
-    my $ring  = $_[0][0]==$_[-1][0] && $_[-1][1]==$_[-1][1];
+    my $ring  = $_[0][0]==$_[-1][0] && $_[0][1]==$_[-1][1];
     pop @_ if $ring;
 
     my ($xmin, $ymin) = polygon_bbox @_;
