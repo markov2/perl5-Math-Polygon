@@ -4,7 +4,7 @@ require 5.006;
 
 WriteMakefile
   ( NAME		=> 'Math::Polygon'
-  , VERSION_FROM	=> 'version'
+  , VERSION     	=> '0.005'
   , PREREQ_PM		=>
      { Test::More    => 0.47
      , Scalar::Util  => 1.13
@@ -13,3 +13,24 @@ WriteMakefile
   , AUTHOR              => 'Mark Overmeer'
   , ABSTRACT            => 'Polygon calculations'
   );
+
+### used by oodist during production of distribution
+sub MY::postamble { <<'__POSTAMBLE' }
+
+# for DIST
+RAWDIR          = ../public_html/polygon/raw
+DISTDIR         = ../public_html/polygon/source
+LICENSE         = artistic
+
+# for POD
+FIRST_YEAR      = 2004
+EMAIL           = polygon@overmeer.net
+WEBSITE         = http://perl.overmeer.net/polygon/
+
+# for HTML
+HTML_OUTPUT     = ../public_html/polygon/html
+HTML_DOCROOT    = /polygon/html
+
+__POSTAMBLE
+
+

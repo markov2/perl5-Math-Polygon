@@ -20,6 +20,7 @@ our @EXPORT = qw/
 /;
 
 use List::Util    qw/min max/;
+use Carp          qw/croak/;
 
 =chapter NAME
 
@@ -277,7 +278,7 @@ sub polygon_beautify(@)
 
 =function polygon_equal ARRAY-OF-POINTS, ARRAY-OF-POINTS, [TOLERANCE]
 Compare two polygons, on the level of points. When the polygons are
-the same but rotated, this will return false. See M<same()>.
+the same but rotated, this will return false. See M<polygon_same()>.
 =cut
 
 sub polygon_equal($$;$)
@@ -305,7 +306,7 @@ sub polygon_equal($$;$)
 
 =function polygon_same ARRAY-OF-POINTS, ARRAY-OF-POINTS, [TOLERANCE]
 Compare two polygons, where the polygons may be rotated wrt each
-other. This is (much) slower than M<equal()>, but some algorithms
+other. This is (much) slower than M<polygon_equal()>, but some algorithms
 will cause un unpredictable rotation in the result.
 =cut
 
@@ -317,9 +318,8 @@ sub polygon_same($$;$)
 }
 
 =function polygon_contains_point POINT, LIST-OF-POINTS
-Returns true if the point is unside the polygon.
+Returns true if the point is unside the closed polygon.
 =cut
-
 
 # Algorithms can be found at
 # http://astronomy.swin.edu.au/~pbourke/geometry/insidepoly/
@@ -348,6 +348,9 @@ sub polygon_contains_point($@)
     my ($x, $y) = @$point;
     my $inside  = 0;
 
+    polygon_is_closed(@_)
+       or croak "ERROR: polygon must be closed: begin==end";
+
     my ($px, $py) = @{ (shift) };
     while(@_)
     {   my ($nx, $ny) = @{ (shift) };
@@ -367,6 +370,14 @@ sub polygon_contains_point($@)
     }
 
     $inside;
+}
+
+=function polygon_is_closed POINTS
+=cut
+
+sub polygon_is_closed(@)
+{   my ($first, $last) = @_[0,-1];
+    $first->[0]==$last->[0] && $first->[1]==$last->[1];
 }
 
 1;

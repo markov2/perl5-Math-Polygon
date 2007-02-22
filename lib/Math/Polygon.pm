@@ -280,8 +280,15 @@ or not.  On the edge is inside.
 
 sub contains($)
 {   my ($self, $point) = @_;
-    polygon_contains_point($point, shift->points);
+    polygon_contains_point($point, $self->points);
 }
+
+=method isClosed
+Returns true if the first point of the poly definition is the same
+as the last point.
+=cut
+
+sub isClosed() { polygon_is_closed(shift->points) }
 
 =section Transformations
 
