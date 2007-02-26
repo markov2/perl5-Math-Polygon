@@ -1,13 +1,19 @@
 Revision history for Perl extension Math::Polygon
 
-version 0.005:
+version 0.95:
 
-	- polygon_contains_point() only works if poly is closed: croak
+	- polygon_contains_point() only work if poly is closed: croak
 	  otherwise. [Dennis Hartigan-O'Connor]
+
+	- polygon_is_clockwise() will also croak when the poly is not
+	  closed.
 
 	- new polygon_is_closed() and $poly->isClosed.
 
 	- use oodist to generate manuals, not own scripts.
+
+	- bumped version number to indicate that the module interface
+	  is stable: no major changes expected before 1.00
 
 version 0.004: Fri Jul 21 10:17:44 CEST 2006
 

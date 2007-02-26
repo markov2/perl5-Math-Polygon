@@ -92,6 +92,10 @@ sub polygon_area(@)
 
 sub polygon_is_clockwise(@)
 {   my $area  = 0;
+
+    polygon_is_closed(@_)
+       or croak "ERROR: polygon must be closed: begin==end";
+
     while(@_ >= 2)
     {   $area += $_[0][0]*$_[1][1] - $_[0][1]*$_[1][0];
         shift;
@@ -141,7 +145,7 @@ sub polygon_perimeter(@)
 
 =function polygon_start_minxy LIST-OF-POINTS
 Returns the polygon, where the point which is closest to the left-bottom
-corner of the boundind box is made first.
+corner of the bounding box is made first.
 =cut
 
 sub polygon_start_minxy(@)
