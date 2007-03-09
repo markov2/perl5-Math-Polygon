@@ -4,7 +4,7 @@ require 5.006;
 
 WriteMakefile
   ( NAME		=> 'Math::Polygon'
-  , VERSION     	=> '0.95'
+  , VERSION     	=> '0.96'
   , PREREQ_PM		=>
      { Test::More    => 0.47
      , Scalar::Util  => 1.13
@@ -24,13 +24,8 @@ LICENSE         = artistic
 
 # for POD
 FIRST_YEAR      = 2004
-EMAIL           = polygon@overmeer.net
-WEBSITE         = http://perl.overmeer.net/polygon/
-
-# for HTML
-HTML_OUTPUT     = ../public_html/polygon/html
-HTML_DOCROOT    = /polygon/html
-
+EMAIL           = geo@overmeer.net
+WEBSITE         = http://perl.overmeer.net/geo/
 __POSTAMBLE
 
 

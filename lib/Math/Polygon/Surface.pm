@@ -36,7 +36,7 @@ The outer polygon, a M<Math::Polygon>.
 =default inner []
 The inner polygons, zero or more M<Math::Polygon> objects.
 
-=error Surface requires outer polygon
+=error surface requires outer polygon
 =cut
 
 sub new(@)
@@ -66,7 +66,7 @@ sub init($$)
     }
     else
     {   $outer = $args->{outer}
-            or die "ERROR: Surface requires outer polygon\n";
+            or die "ERROR: surface requires outer polygon\n";
 
         @inner = @{$args->{inner}} if defined $args->{inner};
     }

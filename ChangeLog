@@ -1,6 +1,16 @@
 Revision history for Perl extension Math::Polygon
 
-version 0.95:
+version 0.96: Fri Mar  9 14:19:41 CET 2007
+
+	- refer to webpage http://perl.overmeer.net/geo
+
+	- email address geo@overmeer.net
+
+	- removed stuff to create own manual-pages.
+
+	- all error messages should start with lower-case
+
+version 0.95: Mon Feb 26 11:23:44 CET 2007
 
 	- polygon_contains_point() only work if poly is closed: croak
 	  otherwise. [Dennis Hartigan-O'Connor]
