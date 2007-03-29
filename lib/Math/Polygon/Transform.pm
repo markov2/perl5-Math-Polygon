@@ -113,7 +113,7 @@ specify rotation angle in rads (between -pi and 2*pi)
 
 =cut
 
-sub polygon_rotate($@)
+sub polygon_rotate(@)
 {   my %opts;
     while(@_ && !ref $_[0])
     {   my $key     = shift;

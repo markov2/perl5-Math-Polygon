@@ -1,5 +1,9 @@
 Revision history for Perl extension Math::Polygon
 
+version 0.97: Thu Mar 29 08:48:14 CEST 2007
+
+	- fix prototype of polygon_rotate, to fix method rotate() [ville9]
+
 version 0.96: Fri Mar  9 14:19:41 CET 2007
 
 	- refer to webpage http://perl.overmeer.net/geo
