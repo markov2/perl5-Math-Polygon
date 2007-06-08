@@ -1,8 +1,23 @@
 Revision history for Perl extension Math::Polygon
 
+20070425 Request by Christian Sauer: polygon intersection
+   paper with nice algorithm: http://citeseer.ist.psu.edu/cache/papers/cs/25021/http:zSzzSzfractal.dam.fmph.uniba.skzSz~sccgzSzproceedingszSz1998zSzZalik.pdf/zalik98quick.pdf
+
+version 0.99: Fri Jun  8 16:31:33 CEST 2007
+
+	- fillClip1() did not handle empty result connectly, neither
+	  did ::Clip::polygon_fill_clip1().  Reported by [Christian Sauer]
+
+	- added t/pod.t
+
+version 0.98: Tue Apr  3 09:38:57 CEST 2007
+
+	- missing export of polygon_is_closed [Christian Sauer]
+
 version 0.97: Thu Mar 29 08:48:14 CEST 2007
 
-	- fix prototype of polygon_rotate, to fix method rotate() [ville9]
+	- fix prototype of polygon_rotate, to fix method rotate()
+	  [Christian Sauer]
 
 version 0.96: Fri Mar  9 14:19:41 CET 2007
 

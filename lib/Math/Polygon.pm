@@ -508,12 +508,15 @@ the BOX are mapped on the borders.  The polygon stays in one piece,
 but may have vertices which are followed in two directions.
 
 Returned is one polygon, which is cleaned from double points,
-spikes and superfluous intermediate points, or undef.
+spikes and superfluous intermediate points, or C<undef> when
+no polygon is outside the BOX.
+Function M<Math::Polygon::Clip::polygon_fill_clip1()>.
 =cut
 
 sub fillClip1($$$$)
 {   my ($self, @bbox) = @_;
     my @clip = polygon_fill_clip1 \@bbox, $self->points;
+    @clip or return undef;
     $self->new(points => \@clip);
 }
 

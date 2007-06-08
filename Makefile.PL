@@ -4,11 +4,12 @@ require 5.006;
 
 WriteMakefile
   ( NAME		=> 'Math::Polygon'
-  , VERSION     	=> '0.97'
+  , VERSION     	=> '0.99'
   , PREREQ_PM		=>
      { Test::More    => 0.47
      , Scalar::Util  => 1.13
      , Math::Trig    => 0
+     , Test::Pod     => 1.00
      }
   , AUTHOR              => 'Mark Overmeer'
   , ABSTRACT            => 'Polygon calculations'
@@ -23,9 +24,7 @@ DISTDIR         = ../public_html/polygon/source
 LICENSE         = artistic
 
 # for POD
-FIRST_YEAR      = 2004
+FIRST_YEAR      = 2004,2006
 EMAIL           = geo@overmeer.net
 WEBSITE         = http://perl.overmeer.net/geo/
 __POSTAMBLE
-
-

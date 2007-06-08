@@ -49,6 +49,7 @@ spikes and superfluous intermediate points.
 sub polygon_fill_clip1($@)
 {   my $bbox = shift;
     my ($xmin, $ymin, $xmax, $ymax) = @$bbox;
+    @_ or return ();  # empty list of points
 
     # Collect all crosspoints with axes, plus the original points
     my $next   = shift;
@@ -93,12 +94,10 @@ sub polygon_line_clip($@)
     my $fromin = _inside $bbox, $from;
     push @frags, [ $from ] if $fromin;
 
-#warn @_." to go\n";
     while(@_)
     {   my $next   = shift;
         my $nextin = _inside $bbox, $next;
 
-#warn "1-> $fromin $nextin\n";
         if($fromin && $nextin)       # stay within
         {   push @{$frags[-1]}, $next;
         }
@@ -114,11 +113,6 @@ sub polygon_line_clip($@)
             push @frags, \@cross if @cross;
         }
 
-#if(@frags)
-#{  my $x = Dumper $frags[-1];
-#   $x =~ s/\s*//gs;
-#   warn $x,"\n";
-#}
         ($from, $fromin) = ($next, $nextin);
     }
 
