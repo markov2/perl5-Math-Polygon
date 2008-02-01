@@ -1,6 +1,6 @@
 ChangeLog
 MANIFEST
-META.yml                                 Module meta-data (added by MakeMaker)
+META.yml
 Makefile.PL
 lib/Math/Polygon.pm
 lib/Math/Polygon/Calc.pm

@@ -3,16 +3,17 @@ use ExtUtils::MakeMaker;
 require 5.006;
 
 WriteMakefile
-  ( NAME		=> 'Math::Polygon'
-  , VERSION     	=> '0.99'
-  , PREREQ_PM		=>
+  ( NAME        => 'Math::Polygon'
+  , VERSION     => '1.00'
+  , PREREQ_PM   =>
      { Test::More    => 0.47
      , Scalar::Util  => 1.13
      , Math::Trig    => 0
      , Test::Pod     => 1.00
      }
-  , AUTHOR              => 'Mark Overmeer'
-  , ABSTRACT            => 'Polygon calculations'
+  , AUTHOR      => 'Mark Overmeer'
+  , ABSTRACT    => 'Polygon calculations'
+  , LICENSE     => 'perl'
   );
 
 ### used by oodist during production of distribution
