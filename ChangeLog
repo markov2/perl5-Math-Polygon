@@ -3,6 +3,13 @@ Revision history for Perl extension Math::Polygon
 20070425 Request by Christian Sauer: polygon intersection
    paper with nice algorithm: http://citeseer.ist.psu.edu/cache/papers/cs/25021/http:zSzzSzfractal.dam.fmph.uniba.skzSz~sccgzSzproceedingszSz1998zSzZalik.pdf/zalik98quick.pdf
 
+version 1.01: Mon May 25 14:35:26 CEST 2009
+
+	- Added Math::Polygon::Convex with chainHull_2D implementation by
+	  [Jari Turkia] with many improvements.  Tests in t/50chainhull.t
+
+	- do not run t/pod.t in devel environment.
+
 version 1.00: Fri Feb  1 15:32:20 CET 2008
 
 	- ::Calc::polygon_is_open() will die on empty polygon

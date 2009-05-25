@@ -4,7 +4,7 @@ require 5.006;
 
 WriteMakefile
   ( NAME        => 'Math::Polygon'
-  , VERSION     => '1.00'
+  , VERSION     => '1.01'
   , PREREQ_PM   =>
      { Test::More    => 0.47
      , Scalar::Util  => 1.13
@@ -26,6 +26,6 @@ LICENSE         = artistic
 
 # for POD
 FIRST_YEAR      = 2004,2006
-EMAIL           = geo@overmeer.net
+EMAIL           = perl@overmeer.net
 WEBSITE         = http://perl.overmeer.net/geo/
 __POSTAMBLE

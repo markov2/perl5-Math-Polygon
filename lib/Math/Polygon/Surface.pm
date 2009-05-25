@@ -165,4 +165,21 @@ sub fillClip1($$$$)
       );
 }
 
+=method string
+Translate the surface structure into some string.  Use M<Geo::WKT> if you
+need a standardized format.
+
+Returned is a single string possibly containing multiple lines.  The first
+line is the outer, the other lines represent the inner polygons.
+=cut
+
+sub string()
+{   my $self = shift;
+      "["
+    . join( "]\n-["
+          , $self->outer->string
+          , map {$_->string } $self->inner)
+    . "]";
+}
+
 1;

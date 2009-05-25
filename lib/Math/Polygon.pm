@@ -520,13 +520,14 @@ sub fillClip1($$$$)
     $self->new(points => \@clip);
 }
 
-=chapter Display
+#-------------
+
+=section Display
 
 =method string 
 =cut
 
 sub string() { polygon_string(shift->points) }
-
 
 
 1;
