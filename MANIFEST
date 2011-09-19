@@ -16,6 +16,7 @@ t/14inside.t
 t/30cross.t
 t/31clipl.t
 t/32clipf1.t
+t/33centroid.t
 t/40resize.t
 t/41move.t
 t/42rotate.t

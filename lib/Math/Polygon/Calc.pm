@@ -18,6 +18,7 @@ our @EXPORT = qw/
  polygon_start_minxy
  polygon_string
  polygon_contains_point
+ polygon_centroid
 /;
 
 use List::Util    qw/min max/;
@@ -381,6 +382,31 @@ sub polygon_contains_point($@)
     }
 
     $inside;
+}
+
+=function polygon_centroid LIST-OF-POINTS
+Returns the centroid location of the polygon.  The last point of the list
+must be the same as the first to produce a correct result.
+
+The algorithm was found at
+F<http://en.wikipedia.org/wiki/Centroid#Centroid_of_polygon>
+
+=cut
+
+sub polygon_centroid(@)
+{
+    polygon_is_closed(@_)
+        or croak "ERROR: polygon must be closed: begin==end";
+
+    my ($cx, $cy, $a) = (0, 0, 0);
+    foreach my $i (0..@_-2)
+    {    my $ap = $_[$i][0]*$_[$i+1][1] - $_[$i+1][0]*$_[$i][1];
+         $cx   += ($_[$i][0]+$_[$i+1][0]) * $ap;
+         $cy   += ($_[$i][1]+$_[$i+1][1]) * $ap;
+         $a    += $ap;
+    }
+    my $c = 3*$a; # 6*$a/2;
+    [ $cx/$c, $cy/$c ];
 }
 
 =function polygon_is_closed POINTS

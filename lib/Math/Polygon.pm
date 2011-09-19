@@ -19,13 +19,15 @@ Math::Polygon - Class for maintaining polygon data
 
  my ($xmin, $ymin, $xmax, $ymax) = $poly->bbox;
 
- my $area = $poly->area;
- my $l    = $poly->perimeter;
+ my $area   = $poly->area;
+ my $l      = $poly->perimeter;
  if($poly->isClockwise) { ... };
  
- my $rot  = $poly->startMinXY;
+ my $rot    = $poly->startMinXY;
+ my $center = $poly->centroid;
+ if($poly->contains($point)) { ... };
 
- my $boxed = $poly->lineClip($xmin, $xmax, $ymin, $ymax);
+ my $boxed  = $poly->lineClip($xmin, $xmax, $ymin, $ymax);
 
 =chapter DESCRIPTION
 
@@ -156,6 +158,19 @@ sub area()
 {   my $self = shift;
     return $self->{MP_area} if defined $self->{MP_area};
     $self->{MP_area} = polygon_area $self->points;
+}
+
+=method centroid
+Returns the centroid location of the polygon.  The last point of the list
+must be the same as the first to produce a correct result.  The computed
+result is cached.
+Function M<Math::Polygon::Calc::polygon_centroid()>.
+
+=cut
+sub centroid()
+{   my $self = shift;
+    return $self->{MP_centroid} if $self->{MP_centroid};
+    $self->{MP_centroid} = polygon_centroid $self->points;
 }
 
 =method isClockwise
@@ -528,6 +543,5 @@ sub fillClip1($$$$)
 =cut
 
 sub string() { polygon_string(shift->points) }
-
 
 1;
