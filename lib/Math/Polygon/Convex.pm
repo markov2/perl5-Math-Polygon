@@ -35,7 +35,7 @@ with alternative implementations in the future.
 
 =chapter FUNCTIONS
 
-=function chainHull_2D POINTS
+=function chainHull_2D $points
 Each POINT is an ARRAY of two elements: the X and Y coordinate of a point.
 Returned is the enclosing convex M<Math::Polygon> object.
 

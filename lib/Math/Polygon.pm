@@ -38,9 +38,9 @@ and M<Math::Polygon::Clip>.
 
 =section Constructors
 
-=ci_method new [OPTIONS], [POINTS], [OPTIONS]
-You may add OPTIONS after and/or before the POINTS.  You may also use
-the "points" options to get the points listed.  POINTS are references
+=ci_method new [%options], [$points], [%options]
+You may add %options after and/or before the $points.  You may also use
+the "points" options to get the points listed.  $points are references
 to an ARRAY of X and Y.
 
 When C<new> is called as instance method, it is believed that the
@@ -48,7 +48,7 @@ new polygon is derived from the callee, and therefore some facts
 (like clockwise or anti-clockwise direction) will get copied unless
 overruled.
 
-=option  points ARRAY-OF-POINTS
+=option  points ARRAY-of-POINTS
 =default points undef
 See M<points()> and M<nrPoints()>.
 
@@ -113,13 +113,22 @@ sub order() { @{shift->{MP_points}} -1 }
 =method points
 In LIST context, the points are returned as list, otherwise as
 reference to an ARRAY.
+
+=example
+  my @points = $poly->points;
+  my $first  = $points[0];
+  my $x0 = $points[0][0]; # $first->[0]
+  my $y0 = $points[0][1]; # $first->[1]
 =cut
 
 sub points() { wantarray ? @{shift->{MP_points}} : shift->{MP_points} }
 
-=method point INDEX, [INDEX, ...]
-Returns the point with the specified INDEX or INDEXES.  In SCALAR context,
-only the first INDEX is used.
+=method point $index, [$index,...]
+Returns the point with the specified $index or INDEXES.  In SCALAR context,
+only the first $index is used.
+=examples
+  my $point = $poly->point(2);
+  my ($first, $last) = $poly->point(0, -1);
 =cut
 
 sub point(@)
@@ -135,6 +144,9 @@ the bounding box of the polygon (all points of the polygon are inside that
 area).  The computation is expensive, and therefore, the results are
 cached.
 Function M<Math::Polygon::Calc::polygon_bbox()>.
+
+=example
+  my ($xmin, $ymin, $xmax, $ymax) = $poly->bbox;
 =cut
 
 sub bbox()
@@ -152,6 +164,9 @@ must be the same as the first to produce a correct result.  The computed
 result is cached.
 Function M<Math::Polygon::Calc::polygon_area()>.
 
+=example
+  my $area = $poly->area;
+  print "$area $poly_units ^2\n";
 =cut
 
 sub area()
@@ -163,8 +178,11 @@ sub area()
 =method centroid
 Returns the centroid location of the polygon.  The last point of the list
 must be the same as the first to produce a correct result.  The computed
-result is cached.
-Function M<Math::Polygon::Calc::polygon_centroid()>.
+result is cached.  Function M<Math::Polygon::Calc::polygon_centroid()>.
+
+=example
+  my $center = $poly->centroid;
+  my ($cx, $cy) = @$center;
 
 =cut
 sub centroid()
@@ -177,6 +195,9 @@ sub centroid()
 The points are (in majority) orded in the direction of the hands of the clock.
 This calculation is quite expensive (same effort as calculating the area of
 the polygon), and the result is therefore cached.
+
+=example
+  if($poly->isClockwise) ...
 =cut
 
 sub isClockwise()
@@ -187,6 +208,9 @@ sub isClockwise()
 
 =method clockwise
 Make sure the points are in clockwise order.
+
+=example
+  $poly->clockwise;
 =cut
 
 sub clockwise()
@@ -200,6 +224,9 @@ sub clockwise()
 
 =method counterClockwise
 Make sure the points are in counter-clockwise order.
+
+=example
+  $poly->counterClockwise
 =cut
 
 sub counterClockwise()
@@ -217,6 +244,9 @@ the length of any line: of the last point is not equal to the first, then
 a line is presumed; for a polygon they must match.
 Function M<Math::Polygon::Calc::polygon_perimeter()>.
 
+=example
+ my $fence = $poly->perimeter;
+ print "fence length: $fence $poly_units\n"
 =cut
 
 sub perimeter() { polygon_perimeter shift->points }
@@ -234,7 +264,7 @@ sub startMinXY()
     $self->new(polygon_start_minxy $self->points);
 }
 
-=method beautify OPTIONS
+=method beautify %options
 Returns a new, beautified version of this polygon.
 Function M<Math::Polygon::Calc::polygon_beautify()>.
 
@@ -253,7 +283,7 @@ sub beautify(@)
     @beauty>2 ? $self->new(points => \@beauty) : ();
 }
 
-=method equal (OTHER|ARRAY, [TOLERANCE])|POINTS
+=method equal <$other | ARRAY,[$tolerance]> | $points
 Compare two polygons, on the level of points. When the polygons are
 the same but rotated, this will return false. See M<same()>.
 Function M<Math::Polygon::Calc::polygon_equal()>.
@@ -270,7 +300,7 @@ sub equal($;@)
     polygon_equal scalar($self->points), $other, $tolerance;
 }
 
-=method same (OTHER|ARRAY, [TOLERANCE])|POINTS
+=method same <$other | ARRAY,[$tolerance]> | $points
 Compare two polygons, where the polygons may be rotated wrt each
 other. This is (much) slower than M<equal()>, but some algorithms
 will cause un unpredictable rotation in the result.
@@ -288,7 +318,7 @@ sub same($;@)
     polygon_same scalar($self->points), $other, $tolerance;
 }
 
-=method contains POINT
+=method contains $point
 Returns a truth value indicating whether the point is inside the polygon
 or not.  On the edge is inside.
 =cut
@@ -311,7 +341,7 @@ Implemented in M<Math::Polygon::Transform>: changes on the structure of
 the polygon except clipping.  All functions return a new polygon object
 or undef.
 
-=method resize OPTIONS
+=method resize %options
 Returns a resized polygon object.
 See M<Math::Polygon::Transform::polygon_resize()>.
 
@@ -352,7 +382,7 @@ sub resize(@)
        );
 }
 
-=method move OPTIONS
+=method move %options
 Returns a moved polygon object: all point are moved over the
 indicated distance.  See M<Math::Polygon::Transform::polygon_move()>.
 
@@ -376,7 +406,7 @@ sub move(@)
        );
 }
 
-=method rotate OPTIONS
+=method rotate %options
 Returns a rotated polygon object: all point are moved over the
 indicated distance.  See M<Math::Polygon::Transform::polygon_rotate()>.
 
@@ -403,7 +433,7 @@ sub rotate(@)
        );
 }
 
-=method grid OPTIONS
+=method grid %options
 Returns a polygon object with the points snapped to grid points.
 See M<Math::Polygon::Transform::polygon_grid()>.
 
@@ -425,7 +455,7 @@ sub grid(@)
        );
 }
 
-=method mirror OPTIONS
+=method mirror %options
 Mirror the polygon in a line.  Only one of the options can be provided.
 Some programs call this "flip" or "flop".
 
@@ -467,7 +497,7 @@ sub mirror(@)
        );
 }
 
-=method simplify OPTIONS
+=method simplify %options
 Returns a polygon object where points are removed.
 See M<Math::Polygon::Transform::polygon_simplify()>.
 
@@ -505,7 +535,7 @@ sub simplify(@)
 
 =section Clipping
 
-=method lineClip BOX
+=method lineClip $box
 Returned is a list of ARRAYS-OF-POINTS containing line pieces
 from the input polygon.
 Function M<Math::Polygon::Clip::polygon_line_clip()>.
@@ -516,15 +546,15 @@ sub lineClip($$$$)
     polygon_line_clip \@bbox, $self->points;
 }
 
-=method fillClip1 BOX
+=method fillClip1 $box
 Clipping a polygon into rectangles can be done in various ways.
 With this algorithm, the parts of the polygon which are outside
-the BOX are mapped on the borders.  The polygon stays in one piece,
+the $box are mapped on the borders.  The polygon stays in one piece,
 but may have vertices which are followed in two directions.
 
 Returned is one polygon, which is cleaned from double points,
 spikes and superfluous intermediate points, or C<undef> when
-no polygon is outside the BOX.
+no polygon is outside the $box.
 Function M<Math::Polygon::Clip::polygon_fill_clip1()>.
 =cut
 

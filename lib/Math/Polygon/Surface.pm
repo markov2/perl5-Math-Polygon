@@ -23,9 +23,9 @@ from that outer polygon.
 
 =section Constructors
 
-=ci_method new [OPTIONS], [POLYGONS], [OPTIONS]
-You may add OPTIONS after and/or before the POLYGONS.  You may also use
-the "outer" and "inner" options.  POLYGONS are references to ARRAYs of points,
+=ci_method new [%options], [$polygons], %options
+You may add %options after and/or before the $polygons.  You may also use
+the "outer" and "inner" options.  $polygons are references to ARRAYs of points,
 each an ARRAY of X and Y, but better instantiated M<Math::Polygon> objects.
 
 =option  outer POLYGON
@@ -134,7 +134,7 @@ sub perimeter()
 
 =section Clipping
 
-=method lineClip BOX
+=method lineClip $box
 Returned is a list of ARRAYS-OF-POINTS containing line pieces
 from the input surface.  Lines from outer and inner polygons are
 undistinguishable.
@@ -146,10 +146,10 @@ sub lineClip($$$$)
     map { $_->lineClip(@bbox) } $self->outer, $self->inner;
 }
 
-=method fillClip1 BOX
+=method fillClip1 $box
 Clipping a polygon into rectangles can be done in various ways.
 With this algorithm, the parts of the polygon which are outside
-the BOX are mapped on the borders.
+the $box are mapped on the borders.
 
 All polygons are treated separately.
 =cut

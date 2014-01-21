@@ -36,10 +36,10 @@ Cut-off all parts of the polygon which are outside the box
 
 =chapter FUNCTIONS
 
-=function polygon_fill_clip1 ARRAY-BOX, LIST-OF-POINTS
+=function polygon_fill_clip1 ARRAY-$box, LIST-of-$points
 Clipping a polygon into rectangles can be done in various ways.
 With this algorithm (which I designed myself, but may not be new), the
-parts of the polygon which are outside the BOX are mapped on the borders.
+parts of the polygon which are outside the $box are mapped on the borders.
 The polygon stays in one piece.
 
 Returned is one list of points, which is cleaned from double points,
@@ -73,7 +73,7 @@ sub polygon_fill_clip1($@)
     polygon_beautify {despike => 1}, @cropped;
 }
 
-=function polygon_line_clip ARRAY-BOX, LIST-OF-POINTS
+=function polygon_line_clip ARRAY-$box, LIST-of-$points
 Returned is a list of ARRAYS (possibly 0 long) containing line pieces
 from the input polygon (or line).
 
@@ -206,15 +206,15 @@ sub _cross_y($$$)
     (($fx <= $x && $x <= $tx) || ($tx <= $x && $x <= $fx)) ? [$x,$y] : ();
 }
 
-=function polygon_fill_clip2 ARRAY-BOX, LIST-OF-POINTS
-To be implemented.  The polygon falls apart in fragments, which are not
+=function polygon_fill_clip2 ARRAY-$box, LIST-of-$points
+B<To be implemented>.  The polygon falls apart in fragments, which are not
 connected: paths which are followed in two directions are removed.
 This is required by some applications, like polygons used in geographical
 context (country contours and such).
 =cut
 
-=function polygon_fill_clip3 ARRAY-BOX, OUT-POLY, [IN-POLYS]
-To be implemented.  A surrounding polygon, with possible
+=function polygon_fill_clip3 ARRAY-$box, $out-$poly, [$in-$polys]
+B<To be implemented>.  A surrounding polygon, with possible
 inclussions.
 =cut
 

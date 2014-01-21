@@ -48,12 +48,12 @@ packages.
 
 =chapter FUNCTIONS
 
-=function polygon_string LIST-OF-POINTS
+=function polygon_string LIST-of-$points
 =cut
 
 sub polygon_string(@) { join ', ', map { "[$_->[0],$_->[1]]" } @_ }
 
-=function polygon_bbox LIST-OF-POINTS
+=function polygon_bbox LIST-of-$points
 Returns a list with four elements: (xmin, ymin, xmax, ymax), which describe
 the bounding box of the polygon (all points of the polygon are within that
 area.
@@ -68,7 +68,7 @@ sub polygon_bbox(@)
     );
 }
 
-=function polygon_area LIST-OF-POINTS
+=function polygon_area LIST-of-$points
 Returns the area enclosed by the polygon.  The last point of the list
 must be the same as the first to produce a correct result.
 
@@ -89,7 +89,7 @@ sub polygon_area(@)
     abs($area)/2;
 }
 
-=function polygon_is_clockwise LIST-OF-POINTS
+=function polygon_is_clockwise LIST-of-$points
 =cut
 
 sub polygon_is_clockwise(@)
@@ -106,7 +106,7 @@ sub polygon_is_clockwise(@)
     $area < 0;
 }
 
-=function polygon_clockwise LIST-OF-POINTS
+=function polygon_clockwise LIST-of-$points
 Be sure the polygon points are in clockwise order.
 =cut
 
@@ -114,7 +114,7 @@ sub polygon_clockwise(@)
 {   polygon_is_clockwise(@_) ? @_ : reverse @_;
 }
 
-=function polygon_counter_clockwise LIST-OF-POINTS
+=function polygon_counter_clockwise LIST-of-$points
 Be sure the polygon points are in counter-clockwise order.
 =cut
 
@@ -123,7 +123,7 @@ sub polygon_counter_clockwise(@)
 }
 
 
-=function polygon_perimeter LIST-OF-POINTS
+=function polygon_perimeter LIST-of-$points
 The length of the line of the polygon.  This can also be used to compute
 the length of any line: of the last point is not equal to the first, then
 a line is presumed; for a polygon they must match.
@@ -145,7 +145,7 @@ sub polygon_perimeter(@)
     $l;
 }
 
-=function polygon_start_minxy LIST-OF-POINTS
+=function polygon_start_minxy LIST-of-$points
 Returns the polygon, where the point which is closest to the left-bottom
 corner of the bounding box is made first.
 =cut
@@ -174,7 +174,7 @@ sub polygon_start_minxy(@)
             : (@_[$rot..$#_], @_[0..$rot-1], ($ring ? $_[$rot] : ()));
 }
 
-=function polygon_beautify [HASH], LIST-OF-POINTS
+=function polygon_beautify [HASH], LIST-of-$points
 Polygons, certainly after some computations, can have a lot of
 horrible artifacts: points which are double, spikes, etc.  This
 functions provided by this module beautify
@@ -282,7 +282,7 @@ sub polygon_beautify(@)
     @res ? (@res, $res[0]) : ();
 }
 
-=function polygon_equal ARRAY-OF-POINTS, ARRAY-OF-POINTS, [TOLERANCE]
+=function polygon_equal ARRAY-of-$points, ARRAY-of-$points, [$tolerance]
 Compare two polygons, on the level of points. When the polygons are
 the same but rotated, this will return false. See M<polygon_same()>.
 =cut
@@ -310,7 +310,7 @@ sub polygon_equal($$;$)
     1;
 }
 
-=function polygon_same ARRAY-OF-POINTS, ARRAY-OF-POINTS, [TOLERANCE]
+=function polygon_same ARRAY-of-$points, ARRAY-of-$points, [$tolerance]
 Compare two polygons, where the polygons may be rotated wrt each
 other. This is (much) slower than M<polygon_equal()>, but some algorithms
 will cause un unpredictable rotation in the result.
@@ -323,7 +323,7 @@ sub polygon_same($$;$)
     polygon_equal \@f, \@s, @_;
 }
 
-=function polygon_contains_point POINT, LIST-OF-POINTS
+=function polygon_contains_point $point, LIST-of-$points
 Returns true if the point is unside the closed polygon.
 =cut
 
@@ -384,7 +384,7 @@ sub polygon_contains_point($@)
     $inside;
 }
 
-=function polygon_centroid LIST-OF-POINTS
+=function polygon_centroid LIST-of-$points
 Returns the centroid location of the polygon.  The last point of the list
 must be the same as the first to produce a correct result.
 
@@ -409,7 +409,7 @@ sub polygon_centroid(@)
     [ $cx/$c, $cy/$c ];
 }
 
-=function polygon_is_closed POINTS
+=function polygon_is_closed $points
 =cut
 
 sub polygon_is_closed(@)

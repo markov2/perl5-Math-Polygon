@@ -33,7 +33,7 @@ This package contains polygon transformation algorithms.
 
 =chapter FUNCTIONS
 
-=function polygon_resize OPTIONS, LIST-OF-POINTS
+=function polygon_resize %options, LIST-of-$points
 
 =option  scale FLOAT
 =default scale C<1.0>
@@ -73,7 +73,7 @@ sub polygon_resize(@)
     map { [ $cx + ($_->[0]-$cx)*$sx,  $cy + ($_->[1]-$cy) * $sy ] } @_;
 }
 
-=function polygon_move OPTIONS, LIST-OF-POINTS
+=function polygon_move %options, LIST-of-$points
 Returns a list of points which are moved over the indicated distance
 
 =option  dx FLOAT
@@ -99,7 +99,7 @@ sub polygon_move(@)
     map { [ $_->[0] +$dx, $_->[1] +$dy ] } @_;
 }
 
-=function polygon_rotate OPTIONS, LIST-OF-POINTS
+=function polygon_rotate %options, LIST-of-$points
 =option  degrees FLOAT
 =default degrees 0
 specify rotation angle in degrees (between -180 and 360).
@@ -142,7 +142,7 @@ sub polygon_rotate(@)
           ] } @_;
 }
 
-=function polygon_grid OPTIONS, LIST-OF-POINTS
+=function polygon_grid %options, LIST-of-$points
 Snap the polygon points to grid points, where artifacts are removed.
 
 =option  raster FLOAT
@@ -172,7 +172,7 @@ sub polygon_grid(@)
           ] } @_;
 }
 
-=function polygon_mirror OPTIONS, LIST-OF-POINTS
+=function polygon_mirror %options, LIST-of-$points
 Mirror the polygon in a line.  Only one of the options can be provided.
 Some programs call this "flip" or "flop".
 
@@ -254,7 +254,7 @@ sub polygon_mirror(@)
           [ $xf*($c-$b) - $_->[0], $yf*($b-$c) + 2*$c - $_->[1] ] } @_;
 }
 
-=function polygon_simplify OPTIONS, LIST-OF-POINTS
+=function polygon_simplify %options, LIST-of-$points
 
 =option  same FLOAT
 =default same C<0.0001>
@@ -309,7 +309,6 @@ sub polygon_simplify(@)
         my @new;
 
         my $p       = shift;
-
         while(@_)
         {   my ($x, $y)   = @$p;
 

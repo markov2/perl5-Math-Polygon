@@ -2,6 +2,12 @@ Revision history for Perl extension Math::Polygon
 
 20070425 Request by Christian Sauer: polygon intersection
    paper with nice algorithm: http://citeseer.ist.psu.edu/cache/papers/cs/25021/http:zSzzSzfractal.dam.fmph.uniba.skzSz~sccgzSzproceedingszSz1998zSzZalik.pdf/zalik98quick.pdf
+20121024 Request by Rick Rutgers: widening polygon contour
+
+version 1.03: Tue Jan 21 14:33:07 CET 2014
+	Changes:
+	- add example to centroid, suggested by [Michael R. Davis]
+	- change documentation style.
 
 version 1.02: Mon Sep 19 12:06:32 CEST 2011
 	- Added centroid functions, implemented by [Fred Zellinger]
