@@ -4,19 +4,32 @@ Revision history for Perl extension Math::Polygon
    paper with nice algorithm: http://citeseer.ist.psu.edu/cache/papers/cs/25021/http:zSzzSzfractal.dam.fmph.uniba.skzSz~sccgzSzproceedingszSz1998zSzZalik.pdf/zalik98quick.pdf
 20121024 Request by Rick Rutgers: widening polygon contour
 
+version 1.04: Fri 23 Sep 16:03:17 CEST 2016
+
+	Fixes:
+	- contains on vertical edge
+	  rt.cpan.org#118030 [Marcus@fairwayit]
+
+	Improvements:
+	- remove duplicate points in chainHull_2D
+	  reported by [Michael R. Davis]
+
 version 1.03: Tue Jan 21 14:33:07 CET 2014
-	Changes:
+
+	Improvements:
 	- add example to centroid, suggested by [Michael R. Davis]
 	- change documentation style.
 
 version 1.02: Mon Sep 19 12:06:32 CEST 2011
+
+	Improvements:
 	- Added centroid functions, implemented by [Fred Zellinger]
 
 version 1.01: Mon May 25 14:35:26 CEST 2009
 
+	Improvements:
 	- Added Math::Polygon::Convex with chainHull_2D implementation by
 	  [Jari Turkia] with many improvements.  Tests in t/50chainhull.t
-
 	- do not run t/pod.t in devel environment.
 
 version 1.00: Fri Feb  1 15:32:20 CET 2008

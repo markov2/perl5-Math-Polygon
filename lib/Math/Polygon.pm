@@ -38,7 +38,7 @@ and M<Math::Polygon::Clip>.
 
 =section Constructors
 
-=ci_method new [%options], [$points], [%options]
+=ci_method new [%options], [@points], [%options]
 You may add %options after and/or before the $points.  You may also use
 the "points" options to get the points listed.  $points are references
 to an ARRAY of X and Y.

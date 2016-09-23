@@ -113,6 +113,12 @@ sub chainHull_2D(@)
     push @H, $P[$minmin]
         if $minmax != $minmin; # joining endpoint onto stack
 
+    # Remove duplicate points.
+    for(my $i = @H-1; $i > 1; $i--)
+    {   splice @H, $i, 1
+            while $H[$i][0]==$H[$i-1][0] && $H[$i][1]==$H[$i-1][1];
+    }
+
     Math::Polygon->new(@H);
 }
 

@@ -51,7 +51,7 @@ packages.
 =function polygon_string LIST-of-$points
 =cut
 
-sub polygon_string(@) { join ', ', map { "[$_->[0],$_->[1]]" } @_ }
+sub polygon_string(@) { join ', ', map "[$_->[0],$_->[1]]", @_ }
 
 =function polygon_bbox LIST-of-$points
 Returns a list with four elements: (xmin, ymin, xmax, ymax), which describe
@@ -61,10 +61,10 @@ area.
 
 sub polygon_bbox(@)
 {
-    ( min( map {$_->[0]} @_ )
-    , min( map {$_->[1]} @_ )
-    , max( map {$_->[0]} @_ )
-    , max( map {$_->[1]} @_ )
+    ( min( map $_->[0], @_ )
+    , min( map $_->[1], @_ )
+    , max( map $_->[0], @_ )
+    , max( map $_->[1], @_ )
     );
 }
 
@@ -174,11 +174,11 @@ sub polygon_start_minxy(@)
             : (@_[$rot..$#_], @_[0..$rot-1], ($ring ? $_[$rot] : ()));
 }
 
-=function polygon_beautify [HASH], LIST-of-$points
+=function polygon_beautify [$options], LIST-of-$points
 Polygons, certainly after some computations, can have a lot of
 horrible artifacts: points which are double, spikes, etc.  This
 functions provided by this module beautify
-The optional HASH contains the OPTIONS:
+The optional HASH contains the $options:
 
 =option  remove_spikes BOOLEAN
 =default remove_spikes <false>
@@ -324,11 +324,11 @@ sub polygon_same($$;$)
 }
 
 =function polygon_contains_point $point, LIST-of-$points
-Returns true if the point is unside the closed polygon.
+Returns true if the point is inside the closed polygon.
 =cut
 
 # Algorithms can be found at
-# http://astronomy.swin.edu.au/~pbourke/geometry/insidepoly/
+# http://www.eecs.umich.edu/courses/eecs380/HANDOUTS/PROJ2/InsidePoly.html
 # p1 = polygon[0];
 # for (i=1;i<=N;i++) {
 #   p2 = polygon[i % N];
@@ -361,9 +361,16 @@ sub polygon_contains_point($@)
 
     while(@_)
     {   my ($nx, $ny) = @{ (shift) };
+
+        # Extra check for exactly on the edge when the axes are
+        # horizontal or vertical.
         return 1 if $y==$py && $py==$ny
                  && ($x >= $px || $x >= $nx)
                  && ($x <= $px || $x <= $nx);
+
+        return 1 if $x==$px && $px==$nx
+                 && ($y >= $py || $y >= $ny)
+                 && ($y <= $py || $y <= $ny);
 
         if(   $py == $ny
            || ($y <= $py && $y <= $ny)
@@ -375,8 +382,10 @@ sub polygon_contains_point($@)
             next;
         }
 
+        # side wrt diagonal
+        my $xinters = ($y-$py)*($nx-$px)/($ny-$py)+$px;
         $inside = !$inside
-            if $px==$nx || $x <= ($y-$py)*($nx-$px)/($ny-$py)+$px;
+            if $px==$nx || $x <= $xinters;
 
         ($px, $py) = ($nx, $ny);
     }
