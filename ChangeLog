@@ -4,11 +4,20 @@ Revision history for Perl extension Math::Polygon
    paper with nice algorithm: http://citeseer.ist.psu.edu/cache/papers/cs/25021/http:zSzzSzfractal.dam.fmph.uniba.skzSz~sccgzSzproceedingszSz1998zSzZalik.pdf/zalik98quick.pdf
 20121024 Request by Rick Rutgers: widening polygon contour
 
+version 1.05: Wed Dec 28 12:55:41 CET 2016
+
+	Fixes:
+	- spelling fix.  rt.cpan.org#118297 [Angel Abad]
+
+	Improvements:
+	- add distance to polygon calculation [Andreas Koenig]
+	- use Perl from PATH when running in tests stand-alone.
+
 version 1.04: Fri 23 Sep 16:03:17 CEST 2016
 
 	Fixes:
 	- contains on vertical edge
-	  rt.cpan.org#118030 [Marcus@fairwayit]
+	  rt.cpan.org#118030 [Marcus Robst]
 
 	Improvements:
 	- remove duplicate points in chainHull_2D

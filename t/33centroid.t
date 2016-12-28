@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use lib '../lib';
 use Math::Polygon::Calc 'polygon_centroid';
 use warnings;

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # test ::Convex::chainHull_2D;
 
 use strict;

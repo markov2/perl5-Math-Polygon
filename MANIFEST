@@ -13,6 +13,7 @@ t/11size.t
 t/12beauty.t
 t/13rot.t
 t/14inside.t
+t/15distance.t
 t/30cross.t
 t/31clipl.t
 t/32clipf1.t

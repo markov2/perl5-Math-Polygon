@@ -253,7 +253,7 @@ sub perimeter() { polygon_perimeter shift->points }
 
 =method startMinXY
 Returns a new polygon object, where the points are rotated in such a way
-that the point which is losest to the left-bottom point of the bouding
+that the point which is losest to the left-bottom point of the bounding
 box has become the first.
 
 Function M<Math::Polygon::Calc::polygon_start_minxy()>.
@@ -326,6 +326,16 @@ or not.  On the edge is inside.
 sub contains($)
 {   my ($self, $point) = @_;
     polygon_contains_point($point, $self->points);
+}
+
+=method distance POINT
+[1.05] Returns the distance of the point to the closest point on the border of
+the polygon, zero if the point is on an edge.
+=cut
+
+sub distance($)
+{   my ($self, $point) = @_;
+    polygon_distance($point, $self->points);
 }
 
 =method isClosed

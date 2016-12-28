@@ -8,17 +8,18 @@ our @EXPORT = qw/
  polygon_area
  polygon_bbox
  polygon_beautify
+ polygon_centroid
+ polygon_clockwise
+ polygon_contains_point
+ polygon_counter_clockwise
+ polygon_distance
  polygon_equal
  polygon_is_clockwise
  polygon_is_closed
- polygon_clockwise
- polygon_counter_clockwise
  polygon_perimeter
  polygon_same
  polygon_start_minxy
  polygon_string
- polygon_contains_point
- polygon_centroid
 /;
 
 use List::Util    qw/min max/;
@@ -324,7 +325,9 @@ sub polygon_same($$;$)
 }
 
 =function polygon_contains_point $point, LIST-of-$points
-Returns true if the point is inside the closed polygon.
+Returns true if the point is inside the closed polygon.  On an edge will
+be flagged as 'inside'.  But be warned of rounding issues, caused by
+the floating-point calculations used by this algorithm.
 =cut
 
 # Algorithms can be found at
@@ -428,4 +431,55 @@ sub polygon_is_closed(@)
     $first->[0]==$last->[0] && $first->[1]==$last->[1];
 }
 
-1;
+=function polygon_distance $point, @polygon
+[1.05] calculate the shortest distance between a point and any vertex of
+a closed polygon.
+=cut
+
+# Contributed by Andreas Koenig for 1.05
+# http://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon#10984080
+# with correction from
+# http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+sub polygon_distance($%)
+{   my $p = shift;
+
+    my ($x, $y) = @$p;
+    my $minDist;
+
+    @_ or return undef;
+
+	my ($x1, $y1) = @{ (shift) };
+	unless(@_)
+	{   my ($dx, $dy) = ($x1 - $x, $y1 - $y);
+        return sqrt($dx * $dx + $dy * $dy);
+    }
+
+    while(@_)
+    {   my ($x2, $y2) = @{ (shift) };   # closed poly!
+        my $A =  $x - $x1;
+        my $B =  $y - $y1;
+        my $C = $x2 - $x1;
+        my $D = $y2 - $y1;
+
+        # closest point to the line segment
+        my $dot    = $A * $C + $B * $D;
+        my $len_sq = $C * $C + $D * $D;
+        my $angle  = $len_sq==0 ? -1 : $dot / $len_sq;
+ 
+        my ($xx, $yy)
+         = $angle < 0 ? ($x1, $y1)   # perpendicular line crosses off segment
+         : $angle > 1 ? ($x2, $y2)
+         :              ($x1 + $angle * $C, $y1 + $angle * $D);
+
+        my $dx = $x - $xx;
+        my $dy = $y - $yy;
+        my $dist = sqrt($dx * $dx + $dy * $dy);
+        $minDist = $dist unless defined $minDist;
+        $minDist = $dist if $dist < $minDist;
+
+		($x1, $y1) = ($x2, $y2);
+    }
+
+    $minDist;
+}
+
