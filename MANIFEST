@@ -27,4 +27,4 @@ t/45simple.t
 t/50chainhull.t
 t/90polygon.t
 t/91surface.t
-t/99pod.t
+xt/99pod.t

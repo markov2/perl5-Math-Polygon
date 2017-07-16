@@ -105,7 +105,7 @@ Returns the number of points,
 sub nrPoints() { scalar @{shift->{MP_points}} }
 
 =method order
-Returns the number of uniqe points: one less than M<nrPoints()>.
+Returns the number of unique points: one less than M<nrPoints()>.
 =cut
 
 sub order() { @{shift->{MP_points}} -1 }
@@ -501,7 +501,7 @@ sub mirror(@)
     $clockwise    = not $clockwise if defined $clockwise;
 
     (ref $self)->new
-       ( points    => [ polygon_grid @_, $self->points ]
+       ( points    => [ polygon_mirror @_, $self->points ]
        , clockwise => $clockwise
        # we could save the bbox calculation as well
        );
