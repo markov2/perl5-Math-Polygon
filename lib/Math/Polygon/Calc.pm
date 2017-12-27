@@ -20,6 +20,7 @@ our @EXPORT = qw/
  polygon_same
  polygon_start_minxy
  polygon_string
+ polygon_format
 /;
 
 use List::Util    qw/min max/;
@@ -483,3 +484,22 @@ sub polygon_distance($%)
     $minDist;
 }
 
+
+=function polygon_format $format, @points
+[1.07] Map the $format over all @points, both the X and Y coordinate.  This
+is especially useful to reduce the number of digits in the stringification.
+For instance, when you want reproducible results in regression scripts.
+
+The format is anything supported by printf(), for instance "%5.2f".  Or,
+you can pass a code reference which accepts a single value.
+=cut
+
+sub polygon_format($@)
+{   my $format = shift;
+	my $call   = ref $format eq 'CODE' ? $format
+      : sub { sprintf $format, $_[0] };
+
+    map [ $call->($_->[0]), $call->($_->[1]) ], @_;
+}
+
+1;
