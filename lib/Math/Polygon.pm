@@ -289,7 +289,7 @@ by this module beautify them.  A new polygon is returned.
 sub beautify(@)
 {   my ($self, %opts) = @_;
     my @beauty = polygon_beautify \%opts, $self->points;
-    @beauty>2 ? $self->new(points => \@beauty) : ();
+    @beauty > 2 ? $self->new(points => \@beauty) : ();
 }
 
 =method equal <$other | \@points,[$tolerance]> | $points

@@ -55,8 +55,8 @@ When you submit an extension, please contribute a set with
 ** Please note: **
 When you contribute in any way, you agree to transfer the copyrights to
 Mark Overmeer (you will get the honors in the code and/or ChangeLog).
-Your contribution will also use the same license as this project: licensed
-as perl itself.
+Your also automatically agree that your contribution is released under
+the same license as this project: licensed as perl itself.
 
 ## Copyright and License
 

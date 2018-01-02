@@ -171,31 +171,28 @@ sub polygon_start_minxy(@)
 
         my $d_sq = ($_[$i][0]-$xmin)**2 + ($_[$i][1]-$ymin)**2;
         if($d_sq < $dmin_sq)
-	{   $dmin_sq = $d_sq;
-	    $rot     = $i;
-	}
+        {   $dmin_sq = $d_sq;
+            $rot     = $i;
+        }
     }
 
     $rot==0 ? (@_, ($ring ? $_[0] : ()))
             : (@_[$rot..$#_], @_[0..$rot-1], ($ring ? $_[$rot] : ()));
 }
 
-=function polygon_beautify [$options], LIST-of-$points
+=function polygon_beautify [\%options], LIST-of-$points
 Polygons, certainly after some computations, can have a lot of
-horrible artifacts: points which are double, spikes, etc.  This
-functions provided by this module beautify
-The optional HASH contains the $options:
+horrible artifacts: points which are double, spikes, etc.
+The optional HASH contains the %options.
 
 =option  remove_spikes BOOLEAN
 =default remove_spikes <false>
+Spikes contain of three successive points, where the first is on the
+line between the second and the third.  The line goes from first to
+second, but then back to get to the third point.
 
-=option  remove_between BOOLEAN
-=default remove_between <false>
-Simple points in-between are always removed, but more complex
-points are not: when the line is not parallel to one of the axes,
-more intensive calculations must take place.  This will only be
-done when this flags is set.
-NOT IMPLEMENTED YET
+At the moment, only pure horizontal and pure vertical spikes are
+removed.
 
 =cut
 
@@ -203,8 +200,7 @@ sub polygon_beautify(@)
 {   my %opts     = ref $_[0] eq 'HASH' ? %{ (shift) } : ();
     return () unless @_;
 
-    my $despike  = exists $opts{remove_spikes}  ? $opts{remove_spikes}  : 0;
-#   my $interpol = exists $opts{remove_between} ? $opts{remove_between} : 0;
+    my $despike  = exists $opts{remove_spikes} ? $opts{remove_spikes}  : 0;
 
     my @res      = @_;
     return () if @res < 4;  # closed triangle = 4 points
@@ -215,74 +211,74 @@ sub polygon_beautify(@)
     {    return () if @res < 3;  # closed triangle = 4 points
 
          my $this = shift @res;
-	 push @res, $this;         # recycle
-	 $unchanged++;
+         push @res, $this;         # recycle
+         $unchanged++;
 
          # remove doubles
-	 my ($x, $y) = @$this;
+         my ($x, $y) = @$this;
          while(@res && $res[0][0]==$x && $res[0][1]==$y)
-	 {   $unchanged = 0;
+         {   $unchanged = 0;
              shift @res;
-	 }
+         }
 
          # remove spike
-	 if($despike && @res >= 2)
-	 {   # any spike
-	     if($res[1][0]==$x && $res[1][1]==$y)
-	     {   $unchanged = 0;
-	         shift @res;
-	     }
+         if($despike && @res >= 2)
+         {   # any spike
+             if($res[1][0]==$x && $res[1][1]==$y)
+             {   $unchanged = 0;
+                 shift @res;
+             }
 
-	     # x-spike
-	     if(   $y==$res[0][1] && $y==$res[1][1]
-	        && (  ($res[0][0] < $x && $x < $res[1][0])
-	           || ($res[0][0] > $x && $x > $res[1][0])))
-	     {   $unchanged = 0;
-	         shift @res;
+             # x-spike
+             if($y==$res[0][1] && $y==$res[1][1]
+                && (   ($res[0][0] < $x && $x < $res[1][0])
+                    || ($res[0][0] > $x && $x > $res[1][0])))
+             {   $unchanged = 0;
+                 shift @res;
              }
 
              # y-spike
-	     if(   $x==$res[0][0] && $x==$res[1][0]
-	        && (  ($res[0][1] < $y && $y < $res[1][1])
-	           || ($res[0][1] > $y && $y > $res[1][1])))
-	     {   $unchanged = 0;
-	         shift @res;
+             if(   $x==$res[0][0] && $x==$res[1][0]
+                && (   ($res[0][1] < $y && $y < $res[1][1])
+                    || ($res[0][1] > $y && $y > $res[1][1])))
+             {   $unchanged = 0;
+                 shift @res;
              }
-	 }
+        }
 
-	 # remove intermediate
-	 if(   @res >= 2
-	    && $res[0][0]==$x && $res[1][0]==$x
-	    && (   ($y < $res[0][1] && $res[0][1] < $res[1][1])
-	        || ($y > $res[0][1] && $res[0][1] > $res[1][1])))
-	 {   $unchanged = 0;
-	     shift @res;
-	 }
+        # remove intermediate
+        if(   @res >= 2
+           && $res[0][0]==$x && $res[1][0]==$x
+           && (   ($y < $res[0][1] && $res[0][1] < $res[1][1])
+               || ($y > $res[0][1] && $res[0][1] > $res[1][1])))
+        {   $unchanged = 0;
+            shift @res;
+        }
 
-	 if(   @res >= 2
-	    && $res[0][1]==$y && $res[1][1]==$y
-	    && (   ($x < $res[0][0] && $res[0][0] < $res[1][0])
-	        || ($x > $res[0][0] && $res[0][0] > $res[1][0])))
-	 {   $unchanged = 0;
-	     shift @res;
-	 }
+        if(   @res >= 2
+           && $res[0][1]==$y && $res[1][1]==$y
+           && (   ($x < $res[0][0] && $res[0][0] < $res[1][0])
+               || ($x > $res[0][0] && $res[0][0] > $res[1][0])))
+        {   $unchanged = 0;
+            shift @res;
+        }
 
-	 # remove 2 out-of order between two which stay
-	 if(@res >= 3
-	    && $x==$res[0][0] && $x==$res[1][0] && $x==$res[2][0]
-	    && ($y < $res[0][1] && $y < $res[1][1]
-	        && $res[0][1] < $res[2][1] && $res[1][1] < $res[2][1]))
-         {   $unchanged = 0;
-	     splice @res, 0, 2;
-	 }
+        # remove 2 out-of order between two which stay
+        if(@res >= 3
+           && $x==$res[0][0] && $x==$res[1][0] && $x==$res[2][0]
+           && ($y < $res[0][1] && $y < $res[1][1]
+               && $res[0][1] < $res[2][1] && $res[1][1] < $res[2][1]))
+        {   $unchanged = 0;
+            splice @res, 0, 2;
+        }
 
-	 if(@res >= 3
-	    && $y==$res[0][1] && $y==$res[1][1] && $y==$res[2][1]
-	    && ($x < $res[0][0] && $x < $res[1][0]
-	        && $res[0][0] < $res[2][0] && $res[1][0] < $res[2][0]))
-         {   $unchanged = 0;
-	     splice @res, 0, 2;
-	 }
+        if(@res >= 3
+           && $y==$res[0][1] && $y==$res[1][1] && $y==$res[2][1]
+           && ($x < $res[0][0] && $x < $res[1][0]
+               && $res[0][0] < $res[2][0] && $res[1][0] < $res[2][0]))
+        {   $unchanged = 0;
+            splice @res, 0, 2;
+        }
     }
 
     @res ? (@res, $res[0]) : ();
@@ -453,9 +449,9 @@ sub polygon_distance($%)
 
     @_ or return undef;
 
-	my ($x1, $y1) = @{ (shift) };
-	unless(@_)
-	{   my ($dx, $dy) = ($x1 - $x, $y1 - $y);
+    my ($x1, $y1) = @{ (shift) };
+    unless(@_)
+    {   my ($dx, $dy) = ($x1 - $x, $y1 - $y);
         return sqrt($dx * $dx + $dy * $dy);
     }
 
@@ -482,7 +478,7 @@ sub polygon_distance($%)
         $minDist = $dist unless defined $minDist;
         $minDist = $dist if $dist < $minDist;
 
-		($x1, $y1) = ($x2, $y2);
+        ($x1, $y1) = ($x2, $y2);
     }
 
     $minDist;
@@ -500,7 +496,7 @@ you can pass a code reference which accepts a single value.
 
 sub polygon_format($@)
 {   my $format = shift;
-	my $call   = ref $format eq 'CODE' ? $format
+    my $call   = ref $format eq 'CODE' ? $format
       : sub { sprintf $format, $_[0] };
 
     map [ $call->($_->[0]), $call->($_->[1]) ], @_;

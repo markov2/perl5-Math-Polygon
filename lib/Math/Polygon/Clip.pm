@@ -70,7 +70,7 @@ sub polygon_fill_clip1($@)
         $x = $xmax if $x > $xmax;
         $y = $ymin if $y < $ymin;
         $y = $ymax if $y > $ymax;
-	push @cropped, [$x, $y];
+        push @cropped, [$x, $y];
     }
 
     polygon_beautify {despike => 1}, @cropped;
@@ -108,7 +108,7 @@ sub polygon_line_clip($@)
         {   push @{$frags[-1]}, _cross_inside $bbox, $from, $next;
         }
         elsif($nextin)               # entering
-	{   my @cross = _cross_inside $bbox, $from, $next;
+        {   my @cross = _cross_inside $bbox, $from, $next;
             push @frags, [ @cross, $next ];
         }
         else                         # pass thru bbox?
@@ -149,10 +149,10 @@ sub _sector($$)  # left-top 678,345,012 right-bottom
 {   my ($bbox, $point) = @_;
     my $xsector = $point->[0] < $bbox->[0] ? 0
                 : $point->[0] < $bbox->[2] ? 1
-		:                            2;
+                :                            2;
     my $ysector = $point->[1] < $bbox->[1] ? 0
                 : $point->[1] < $bbox->[3] ? 1
-		:                            2;
+                :                            2;
     $ysector * 3 + $xsector;
 }
 
@@ -160,11 +160,12 @@ sub _cross($$$)
 {   my ($bbox, $from, $to) = @_;
     my ($xmin, $ymin, $xmax, $ymax) = @$bbox;
 
-    my @cross = ( _cross_x($xmin, $from, $to)
-                , _cross_x($xmax, $from, $to)
-                , _cross_y($ymin, $from, $to)
-                , _cross_y($ymax, $from, $to)
-		);
+    my @cross =
+      ( _cross_x($xmin, $from, $to)
+      , _cross_x($xmax, $from, $to)
+      , _cross_y($ymin, $from, $to)
+      , _cross_y($ymax, $from, $to)
+      );
 
     # order the results
       $from->[0] < $to->[0] ? sort({$a->[0] <=> $b->[0]} @cross)
