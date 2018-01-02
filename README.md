@@ -52,7 +52,7 @@ When you submit an extension, please contribute a set with
 
 3. regression test in t/
 
-** Please note: **
+**Please note:**
 When you contribute in any way, you agree to transfer the copyrights to
 Mark Overmeer (you will get the honors in the code and/or ChangeLog).
 Your also automatically agree that your contribution is released under

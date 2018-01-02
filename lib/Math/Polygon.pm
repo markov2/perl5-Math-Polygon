@@ -65,7 +65,7 @@ on demand.
 =option  bbox ARRAY
 =default bbox undef
 Usually computed from the figure automatically, but can also be
-specified as C<< [xmin, ymin, xmax, ymax]>>.  See M<bbox()>.
+specified as C<< [xmin, ymin, xmax, ymax] >>.  See M<bbox()>.
 
 =example creation of new polygon
  my $p = Math::Polygon->new([1,0],[1,1],[0,1],[0,0],[1,0]);
