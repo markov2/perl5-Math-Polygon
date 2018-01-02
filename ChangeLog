@@ -6,6 +6,9 @@ Revision history for Perl extension Math::Polygon
 
 version 1.09:
 
+	Improvements:
+	- format option to object string() and points()
+
 version 1.08: Tue  2 Jan 12:01:29 CET 2018
 
 	Improvements:

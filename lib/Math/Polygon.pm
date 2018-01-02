@@ -117,18 +117,30 @@ Returns the number of unique points: one less than M<nrPoints()>.
 
 sub order() { @{shift->{MP_points}} -1 }
 
-=method points
+=method points [FORMAT]
 In LIST context, the points are returned as list, otherwise as
-reference to an ARRAY.
+reference to an ARRAY of points.
+
+[1.09] When a FORMAT is given, each coordinate will get processed.
+This may be useful to hide platform specific rounding errors.  FORMAT
+may be a CODE reference or a C<printf()> alike string.
+See M<Math::Polygon::Calc::polygon_format()>.
 
 =example
   my @points = $poly->points;
   my $first  = $points[0];
   my $x0 = $points[0][0]; # $first->[0]
   my $y0 = $points[0][1]; # $first->[1]
+
+  my @points = $poly->points("%.2f");
 =cut
 
-sub points() { wantarray ? @{shift->{MP_points}} : shift->{MP_points} }
+sub points(;$)
+{   my ($self, $format) = @_;
+	my $points = $self->{MP_points};
+	$points    = [ polygon_format $format, @$points ] if $format;
+    wantarray ? @$points : $points;
+}
 
 =method point $index, [$index,...]
 Returns the point with the specified $index or INDEXES.  In SCALAR context,
@@ -604,9 +616,17 @@ sub fillClip1($$$$)
 
 =section Display
 
-=method string 
+=method string [FORMAT]
+Print the polygon.
+
+[1.09] When a FORMAT is specified, all coordinates will get formatted
+first.  This may hide platform dependent rounding differences.
+
 =cut
 
-sub string() { polygon_string(shift->points) }
+sub string(;$)
+{   my ($self, $format) = @_;
+    polygon_string($self->points($format));
+}
 
 1;
