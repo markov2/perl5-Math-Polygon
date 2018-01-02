@@ -11,7 +11,7 @@ WriteMakefile
      , Math::Trig    => 0
      }
   , AUTHOR      => 'Mark Overmeer'
-  , ABSTRACT    => 'Polygon calculations'
+  , ABSTRACT    => 'basic polygon calculations'
   , LICENSE     => 'perl'
   );
 

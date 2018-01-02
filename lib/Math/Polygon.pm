@@ -35,16 +35,17 @@ Math::Polygon - Class for maintaining polygon data
 
 =chapter DESCRIPTION
 
-This class provides an OO interface around M<Math::Polygon::Calc>
-and M<Math::Polygon::Clip>.
+This class provides an Object Oriented interface around
+M<Math::Polygon::Calc>, M<Math::Polygon::Clip>, and other.  Together,
+these modules provide basic transformations on 2D polygons in pure perl.
 
 =chapter METHODS
 
 =section Constructors
 
-=ci_method new [%options], [@points], [%options]
-You may add %options after and/or before the $points.  You may also use
-the "points" options to get the points listed.  $points are references
+=ci_method new %options, [@points], %options
+You may add %options after and/or before the @points.  You may also use
+the "points" options to get the points listed.  @points are references
 to an ARRAY of X and Y.
 
 When C<new> is called as instance method, it is believed that the
@@ -52,7 +53,7 @@ new polygon is derived from the callee, and therefore some facts
 (like clockwise or anti-clockwise direction) will get copied unless
 overruled.
 
-=option  points ARRAY-of-POINTS
+=option  points \@points
 =default points undef
 See M<points()> and M<nrPoints()>.
 
@@ -64,7 +65,7 @@ on demand.
 =option  bbox ARRAY
 =default bbox undef
 Usually computed from the figure automatically, but can also be
-specified as [xmin,ymin,xmax, ymax].  See M<bbox()>.
+specified as C<< [xmin, ymin, xmax, ymax]>>.  See M<bbox()>.
 
 =example creation of new polygon
  my $p = Math::Polygon->new([1,0],[1,1],[0,1],[0,0],[1,0]);
@@ -99,6 +100,8 @@ sub init($$)
     $self->{MP_bbox}      = $args->{bbox};
     $self;
 }
+
+#------------------
 
 =section Attributes
 
@@ -139,6 +142,8 @@ sub point(@)
 {   my $points = shift->{MP_points};
     wantarray ? @{$points}[@_] : $points->[shift];
 }
+
+#------------------
 
 =section Geometry
 
@@ -272,9 +277,9 @@ sub startMinXY()
 Returns a new, beautified version of this polygon.
 Function M<Math::Polygon::Calc::polygon_beautify()>.
 
-Polygons, certainly after some computations, can have a lot of
-horrible artifacts: points which are double, spikes, etc.  This
-functions provided by this module beautify
+Polygons, certainly after some computations, can have a lot of horrible
+artifacts: points which are double, spikes, etc.  This functions provided
+by this module beautify them.  A new polygon is returned.
 
 =option  remove_spikes BOOLEAN
 =default remove_spikes <false>
@@ -287,10 +292,16 @@ sub beautify(@)
     @beauty>2 ? $self->new(points => \@beauty) : ();
 }
 
-=method equal <$other | ARRAY,[$tolerance]> | $points
+=method equal <$other | \@points,[$tolerance]> | $points
 Compare two polygons, on the level of points. When the polygons are
 the same but rotated, this will return false. See M<same()>.
 Function M<Math::Polygon::Calc::polygon_equal()>.
+
+=examples
+  if($poly->equal($other_poly, 0.1)) ...
+  if($poly->equal(\@points, 0.1)) ...
+  if($poly->equal(@points)) ...
+
 =cut
 
 sub equal($;@)
@@ -304,11 +315,17 @@ sub equal($;@)
     polygon_equal scalar($self->points), $other, $tolerance;
 }
 
-=method same <$other | ARRAY,[$tolerance]> | $points
+=method same <$other_polygon | \@points, [$tolerance]> | @points
 Compare two polygons, where the polygons may be rotated wrt each
 other. This is (much) slower than M<equal()>, but some algorithms
 will cause un unpredictable rotation in the result.
 Function M<Math::Polygon::Calc::polygon_same()>.
+
+=examples
+  if($poly->same($other_poly, 0.1)) ...
+  if($poly->same(\@points, 0.1)) ...
+  if($poly->same(@points)) ...
+
 =cut
 
 sub same($;@)
@@ -332,7 +349,7 @@ sub contains($)
     polygon_contains_point($point, $self->points);
 }
 
-=method distance POINT
+=method distance $point
 [1.05] Returns the distance of the point to the closest point on the border of
 the polygon, zero if the point is on an edge.
 =cut
@@ -348,6 +365,8 @@ as the last point.
 =cut
 
 sub isClosed() { polygon_is_closed(shift->points) }
+
+#------------------
 
 =section Transformations
 
@@ -373,7 +392,7 @@ Specific scaling factor in the horizontal direction.
 =default yscale <scale>
 Specific scaling factor in the vertical direction.
 
-=option  center POINT
+=option  center $point
 =default center C<[0,0]>
 
 =cut
@@ -546,6 +565,8 @@ sub simplify(@)
        , bbox      => $self->{MP_bbox}       # protect bounds
        );
 }
+
+#------------------
 
 =section Clipping
 
