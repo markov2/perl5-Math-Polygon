@@ -1,7 +1,11 @@
-use strict;
-use warnings;
+# This code is part of distribution Math::Polygon.  Meta-POD processed with
+# OODoc into POD and HTML manual-pages.  See README.md
+# Copyright Mark Overmeer.  Licensed under the same terms as Perl itself.
 
 package Math::Polygon;
+
+use strict;
+use warnings;
 
 use Math::Polygon::Calc;
 use Math::Polygon::Clip;

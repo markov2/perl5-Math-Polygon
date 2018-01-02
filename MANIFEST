@@ -1,6 +1,7 @@
 ChangeLog
 MANIFEST
 META.yml
+README.md
 Makefile.PL
 lib/Math/Polygon.pm
 lib/Math/Polygon/Calc.pm

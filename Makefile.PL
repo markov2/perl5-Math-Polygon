@@ -4,7 +4,7 @@ require 5.006;
 
 WriteMakefile
   ( NAME        => 'Math::Polygon'
-  , VERSION     => '1.07'
+  , VERSION     => '1.08'
   , PREREQ_PM   =>
      { Test::More    => 0.47
      , Scalar::Util  => 1.13
@@ -19,11 +19,11 @@ WriteMakefile
 sub MY::postamble { <<'__POSTAMBLE' }
 
 # for DIST
-RAWDIR          = ../public_html/polygon/raw
-DISTDIR         = ../public_html/polygon/source
+RAWDIR          = ../public_html/math-polygon/raw
+DISTDIR         = ../public_html/math-polygon/source
 
 # for POD
 FIRST_YEAR      = 2004
-EMAIL           = perl@overmeer.net
-WEBSITE         = http://perl.overmeer.net/geo/
+EMAIL           = markov@cpan.org
+WEBSITE         = http://perl.overmeer.net/CPAN/
 __POSTAMBLE
