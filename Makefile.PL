@@ -13,6 +13,16 @@ WriteMakefile
   , AUTHOR      => 'Mark Overmeer'
   , ABSTRACT    => 'basic polygon calculations'
   , LICENSE     => 'perl'
+  , META_MERGE =>
+      { 'meta-spec' => { version => 2 }
+      , resources  =>
+          { repository =>
+              { type => 'git'
+              , url  => 'https://github.com/markov2/Math-Polygon.git'
+              , web  => 'https://github.com/markov2/Math-Polygon'
+              }
+          }
+      }
   );
 
 ### used by oodist during production of distribution
