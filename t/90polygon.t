@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 36;
+use Test::More tests => 38;
 
 use lib '../lib';
 use Math::Polygon;
@@ -75,3 +75,9 @@ cmp_ok($r->[1][1],'==',0);
 cmp_ok($r->[2][0],'==',1);
 cmp_ok($r->[2][1],'==',1);
 
+# String
+
+is $p->string, '[0,0], [1,1], [0,2], [0,0]', 'string';
+
+my $p4 = Math::Polygon->new([3.1415, 2.182], [1.414, 1.732]);
+is($p4->string("%.2f"), '[3.14,2.18], [1.41,1.73]', 'string format');
