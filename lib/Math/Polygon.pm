@@ -39,16 +39,20 @@ This class provides an Object Oriented interface around
 M<Math::Polygon::Calc>, M<Math::Polygon::Clip>, and other.  Together,
 these modules provide basic transformations on 2D polygons in pure perl.
 
+B<WARNING:> these computations may show platform dependent ronding
+differences.  These may also originate from compilation options of
+the Perl version you installed.
+
 =chapter METHODS
 
 =section Constructors
 
 =ci_method new %options, [@points], %options
-You may add %options after and/or before the @points.  You may also use
-the "points" options to get the points listed.  @points are references
-to an ARRAY of X and Y.
+You may add %options before and/or after the @points.  You may also use
+the "points" option to set the points.  Each point in @points is
+(a references) to an ARRAY with two elements: an X and a Y coordinate.
 
-When C<new> is called as instance method, it is believed that the
+When C<new()> is called as instance method, it is believed that the
 new polygon is derived from the callee, and therefore some facts
 (like clockwise or anti-clockwise direction) will get copied unless
 overruled.
@@ -62,10 +66,10 @@ See M<points()> and M<nrPoints()>.
 Is not specified, it will be computed by the M<isClockwise()> method
 on demand.
 
-=option  bbox ARRAY
+=option  bbox [$xmin,$ymin, $xmax,$ymax] 
 =default bbox undef
-Usually computed from the figure automatically, but can also be
-specified as C<< [xmin, ymin, xmax, ymax] >>.  See M<bbox()>.
+Usually computed from the shape automatically, but can also be
+overruled. See M<bbox()>.
 
 =example creation of new polygon
  my $p = Math::Polygon->new([1,0],[1,1],[0,1],[0,0],[1,0]);
@@ -112,7 +116,7 @@ Returns the number of points,
 sub nrPoints() { scalar @{shift->{MP_points}} }
 
 =method order
-Returns the number of unique points: one less than M<nrPoints()>.
+Returns the number of (unique?) points: one less than M<nrPoints()>.
 =cut
 
 sub order() { @{shift->{MP_points}} -1 }
@@ -129,8 +133,8 @@ See M<Math::Polygon::Calc::polygon_format()>.
 =example
   my @points = $poly->points;
   my $first  = $points[0];
-  my $x0 = $points[0][0]; # $first->[0]
-  my $y0 = $points[0][1]; # $first->[1]
+  my $x0 = $points[0][0];    # == $first->[0]  --> X
+  my $y0 = $points[0][1];    # == $first->[1]  --> Y
 
   my @points = $poly->points("%.2f");
 =cut

@@ -27,16 +27,18 @@ from that outer polygon.
 
 =section Constructors
 
-=ci_method new [%options], [$polygons], %options
-You may add %options after and/or before the $polygons.  You may also use
-the "outer" and "inner" options.  $polygons are references to ARRAYs of points,
-each an ARRAY of X and Y, but better instantiated M<Math::Polygon> objects.
+=ci_method new [%options], [@polygons], %options
+You may merge %options with @polygons.  You may also use
+the "outer" and "inner" options.
 
-=option  outer POLYGON
+Each polygon is a references to an ARRAY of points, each an ARRAY of X
+and Y, but better pass M<Math::Polygon> objects.
+
+=option  outer $polygon
 =default outer undef
 The outer polygon, a M<Math::Polygon>.
 
-=option  inner ARRAY-OF-POLYGONS
+=option  inner \@polygons
 =default inner []
 The inner polygons, zero or more M<Math::Polygon> objects.
 
@@ -85,6 +87,8 @@ sub init($$)
     $self;
 }
 
+#------------
+
 =section Attributes
 
 =method outer
@@ -98,6 +102,8 @@ Returns a list (often empty) of inner polygons.
 =cut
 
 sub inner() { @{shift->{MS_inner}} }
+
+#------------
 
 =section Simple calculations
 
@@ -135,6 +141,8 @@ sub perimeter()
     $per    += $_->perimeter for $self->inner;
     $per;
 }
+
+#------------
 
 =section Clipping
 
