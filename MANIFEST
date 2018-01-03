@@ -1,6 +1,5 @@
 ChangeLog
 MANIFEST
-META.yml
 Makefile.PL
 README.md
 lib/Math/Polygon.pm
