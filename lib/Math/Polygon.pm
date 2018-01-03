@@ -39,7 +39,7 @@ This class provides an Object Oriented interface around
 M<Math::Polygon::Calc>, M<Math::Polygon::Clip>, and other.  Together,
 these modules provide basic transformations on 2D polygons in pure perl.
 
-B<WARNING:> these computations may show platform dependent ronding
+B<WARNING:> these computations may show platform dependent rounding
 differences.  These may also originate from compilation options of
 the Perl version you installed.
 
