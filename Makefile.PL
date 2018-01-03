@@ -4,7 +4,7 @@ require 5.010;
 
 WriteMakefile
   ( NAME        => 'Math::Polygon'
-  , VERSION     => '1.10'
+  , VERSION     => '1.11'
   , PREREQ_PM   =>
      { Test::More    => 0.47
      , Scalar::Util  => 1.13
