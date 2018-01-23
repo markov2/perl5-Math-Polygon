@@ -1,7 +1,7 @@
 # Math::Polygon
 
   * My extended documentation: <http://perl.overmeer.net/CPAN/>
-  * Development via GitHub: <https://github.com/markov2/perl-Math-Polygon>
+  * Development via GitHub: <https://github.com/markov2/perl5-Math-Polygon>
   * Download from CPAN: <ftp://ftp.cpan.org/pub/CPAN/authors/id/M/MA/MARKOV/>
   * Indexed from CPAN: <http://search.cpan.org/~markov/Math-Polygon/>
     and <https://metacpan.org/release/Math-Polygon>

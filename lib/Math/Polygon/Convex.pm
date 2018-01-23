@@ -1,10 +1,10 @@
-# This code is part of distribution Math::Polygon.  Meta-POD processed with
+# This code is part of distribution Math-Polygon.  Meta-POD processed with
 # OODoc into POD and HTML manual-pages.  See README.md
 # Copyright Mark Overmeer.  Licensed under the same terms as Perl itself.
 
 # Algorithm by Dan Sunday
 # - http://geometryalgorithms.com/Archive/algorithm_0109/algorithm_0109.htm
-# Original implementation in Perl by Jari Turkia.
+# Original contributed implementation in Perl by Jari Turkia.
 
 package Math::Polygon::Convex;
 use base 'Exporter';
