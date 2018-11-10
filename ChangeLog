@@ -14,6 +14,8 @@ version 1.11:
 
 	Improvements:
 	- link to github distributions in meta-data.
+	- centroid of line will result in middle.  For longer flat polys, it
+	  will produce a clean error i.s.o "divide by zero". [Alex Sudakov]
 
 version 1.10: Wed  3 Jan 11:04:43 CET 2018
 	Another release, to test releasing to github.

@@ -398,11 +398,15 @@ sub polygon_contains_point($@)
 }
 
 =function polygon_centroid @points
-Returns the centroid location of the polygon.  The last point of the list
-must be the same as the first to produce a correct result.
+Returns the centroid location of the polygon.
+
+The last point of the list must be the same as the first (must be
+'closed') to produce a correct result.  When the polygon is very flat,
+it will not produce a stable result: minor changes in single coordinates
+will move the centroid too far.
 
 The algorithm was found at
-F<http://en.wikipedia.org/wiki/Centroid#Centroid_of_polygon>
+F<http://en.wikipedia.org/wiki/Centroid#Of_a_polygon>
 
 =cut
 
@@ -411,13 +415,20 @@ sub polygon_centroid(@)
     polygon_is_closed(@_)
         or croak "ERROR: polygon must be closed: begin==end";
 
+	return [ ($_[0][0] + $_[1][0])/2, ($_[0][1] + $_[1][1])/2 ]
+		if @_==3;  # line
+
     my ($cx, $cy, $a) = (0, 0, 0);
     foreach my $i (0..@_-2)
-    {    my $ap = $_[$i][0]*$_[$i+1][1] - $_[$i+1][0]*$_[$i][1];
-         $cx   += ($_[$i][0]+$_[$i+1][0]) * $ap;
-         $cy   += ($_[$i][1]+$_[$i+1][1]) * $ap;
+    {    my $ap =   $_[$i][0] * $_[$i+1][1] - $_[$i+1][0] * $_[$i][1];
+         $cx   += ( $_[$i][0] + $_[$i+1][0]) * $ap;
+         $cy   += ( $_[$i][1] + $_[$i+1][1]) * $ap;
          $a    += $ap;
     }
+
+    $a != 0
+        or croak "ERROR: polygon points on a line, so no centroid";
+
     my $c = 3*$a; # 6*$a/2;
     [ $cx/$c, $cy/$c ];
 }

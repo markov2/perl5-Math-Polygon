@@ -210,6 +210,7 @@ result is cached.  Function M<Math::Polygon::Calc::polygon_centroid()>.
   my ($cx, $cy) = @$center;
 
 =cut
+
 sub centroid()
 {   my $self = shift;
     return $self->{MP_centroid} if $self->{MP_centroid};
