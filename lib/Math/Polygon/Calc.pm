@@ -322,7 +322,7 @@ sub polygon_same($$;$)
 {   return 0 if @{$_[0]} != @{$_[1]};
     my @f = polygon_start_minxy @{ (shift) };
     my @s = polygon_start_minxy @{ (shift) };
-    polygon_equal \@f, \@s, @_;
+    polygon_equal \@f, \@s, $_[0];
 }
 
 =function polygon_contains_point $point, @points

@@ -11,6 +11,7 @@ version 1.11:
 
 	Fixes:
 	- fix metadata [Mohammad S Anwar]
+	- polygon_same broken tolerance parameter [Graham Knop]
 
 	Improvements:
 	- link to github distributions in meta-data.

@@ -32,4 +32,3 @@ ok(compare_point($c5, [3,4]));
 # longer line
 #my $c6 = polygon_centroid [1,2], [5,6], [9,10], [1,2];
 #ok(compare_point($c6, [5,6]));
-

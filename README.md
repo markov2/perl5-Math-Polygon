@@ -3,8 +3,7 @@
   * My extended documentation: <http://perl.overmeer.net/CPAN/>
   * Development via GitHub: <https://github.com/markov2/perl5-Math-Polygon>
   * Download from CPAN: <ftp://ftp.cpan.org/pub/CPAN/authors/id/M/MA/MARKOV/>
-  * Indexed from CPAN: <http://search.cpan.org/~markov/Math-Polygon/>
-    and <https://metacpan.org/release/Math-Polygon>
+  * Indexed from CPAN: <https://metacpan.org/release/Math-Polygon>
 
 This module supports simple manipulation of 2D polygons, via two interfaces:
 
