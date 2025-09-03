@@ -198,7 +198,7 @@ removed.
 
 sub polygon_beautify(@)
 {   my %opts     = ref $_[0] eq 'HASH' ? %{ (shift) } : ();
-    return () unless @_;
+    @_ or return ();
 
     my $despike  = exists $opts{remove_spikes} ? $opts{remove_spikes}  : 0;
 
@@ -208,40 +208,40 @@ sub polygon_beautify(@)
     my $unchanged= 0;
 
     while($unchanged < 2*@res)
-    {    return () if @res < 3;  # closed triangle = 4 points
+    {   return () if @res < 3;  # closed triangle = 4 points
 
-         my $this = shift @res;
-         push @res, $this;         # recycle
-         $unchanged++;
+        my $this = shift @res;
+        push @res, $this;         # recycle
+        $unchanged++;
 
-         # remove doubles
-         my ($x, $y) = @$this;
-         while(@res && $res[0][0]==$x && $res[0][1]==$y)
-         {   $unchanged = 0;
-             shift @res;
-         }
+        # remove doubles
+        my ($x, $y) = @$this;
+        while(@res && $res[0][0]==$x && $res[0][1]==$y)
+        {   $unchanged = 0;
+            shift @res;
+        }
 
-         # remove spike
-         if($despike && @res >= 2)
-         {   # any spike
-             if($res[1][0]==$x && $res[1][1]==$y)
-             {   $unchanged = 0;
-                 shift @res;
-             }
+        # remove spike
+        if($despike && @res >= 2)
+        {   # any spike
+            if($res[1][0]==$x && $res[1][1]==$y)
+            {   $unchanged = 0;
+                shift @res;
+            }
 
-             # x-spike
-             if($y==$res[0][1] && $y==$res[1][1]
-                && (($res[0][0] < $x && $x < $res[1][0]) || ($res[0][0] > $x && $x > $res[1][0])))
-             {   $unchanged = 0;
-                 shift @res;
-             }
+            # x-spike
+            if($y==$res[0][1] && $y==$res[1][1]
+               && (($res[0][0] < $x && $x < $res[1][0]) || ($res[0][0] > $x && $x > $res[1][0])))
+            {   $unchanged = 0;
+                shift @res;
+            }
 
-             # y-spike
-             if(   $x==$res[0][0] && $x==$res[1][0]
-                && (($res[0][1] < $y && $y < $res[1][1]) || ($res[0][1] > $y && $y > $res[1][1])))
-             {   $unchanged = 0;
-                 shift @res;
-             }
+            # y-spike
+            if(   $x==$res[0][0] && $x==$res[1][0]
+               && (($res[0][1] < $y && $y < $res[1][1]) || ($res[0][1] > $y && $y > $res[1][1])))
+            {   $unchanged = 0;
+                shift @res;
+            }
         }
 
         # remove intermediate
@@ -306,15 +306,15 @@ sub polygon_equal($$;$)
 }
 
 =function polygon_same \@points1, \@points2, [$tolerance]
-Compare two polygons, where the polygons may be rotated wrt each
-other. This is (much) slower than M<polygon_equal()>, but some algorithms
-will cause un unpredictable rotation in the result.
+Compare two polygons, where the polygons may be rotated or mirrored
+wrt each other. This is (much) slower than M<polygon_equal()>, but some
+algorithms will cause un unpredictable rotation in the result.
 =cut
 
 sub polygon_same($$;$)
 {   return 0 if @{$_[0]} != @{$_[1]};
-    my @f = polygon_start_minxy @{ (shift) };
-    my @s = polygon_start_minxy @{ (shift) };
+    my @f = polygon_start_minxy polygon_clockwise @{ (shift) };
+    my @s = polygon_start_minxy polygon_clockwise @{ (shift) };
     polygon_equal \@f, \@s, $_[0];
 }
 

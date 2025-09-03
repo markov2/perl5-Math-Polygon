@@ -9,6 +9,10 @@ explicitly stated differently.
 
 version 1.12:
 
+	Fixes:
+	- polygon_same must also consider a mirrored result.
+	  rt.cpan.org#169305 [Graham Knop]
+
 	Improvements:
 	- warn about the instability of centoid.
 	  rt.cpan.org#169306 [Graham Knop]
