@@ -9,6 +9,10 @@ explicitly stated differently.
 
 version 1.12:
 
+	Improvements:
+	- warn about the instability of centoid.
+	  rt.cpan.org#169306 [Graham Knop]
+
 version 1.11: Fri  2 May 16:57:09 CEST 2025
 
 	Fixes:

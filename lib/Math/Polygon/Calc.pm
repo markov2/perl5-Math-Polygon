@@ -231,16 +231,14 @@ sub polygon_beautify(@)
 
              # x-spike
              if($y==$res[0][1] && $y==$res[1][1]
-                && (   ($res[0][0] < $x && $x < $res[1][0])
-                    || ($res[0][0] > $x && $x > $res[1][0])))
+                && (($res[0][0] < $x && $x < $res[1][0]) || ($res[0][0] > $x && $x > $res[1][0])))
              {   $unchanged = 0;
                  shift @res;
              }
 
              # y-spike
              if(   $x==$res[0][0] && $x==$res[1][0]
-                && (   ($res[0][1] < $y && $y < $res[1][1])
-                    || ($res[0][1] > $y && $y > $res[1][1])))
+                && (($res[0][1] < $y && $y < $res[1][1]) || ($res[0][1] > $y && $y > $res[1][1])))
              {   $unchanged = 0;
                  shift @res;
              }
@@ -249,16 +247,14 @@ sub polygon_beautify(@)
         # remove intermediate
         if(   @res >= 2
            && $res[0][0]==$x && $res[1][0]==$x
-           && (   ($y < $res[0][1] && $res[0][1] < $res[1][1])
-               || ($y > $res[0][1] && $res[0][1] > $res[1][1])))
+           && (($y < $res[0][1] && $res[0][1] < $res[1][1]) || ($y > $res[0][1] && $res[0][1] > $res[1][1])))
         {   $unchanged = 0;
             shift @res;
         }
 
         if(   @res >= 2
            && $res[0][1]==$y && $res[1][1]==$y
-           && (   ($x < $res[0][0] && $res[0][0] < $res[1][0])
-               || ($x > $res[0][0] && $res[0][0] > $res[1][0])))
+           && (($x < $res[0][0] && $res[0][0] < $res[1][0]) || ($x > $res[0][0] && $res[0][0] > $res[1][0])))
         {   $unchanged = 0;
             shift @res;
         }
@@ -266,16 +262,14 @@ sub polygon_beautify(@)
         # remove 2 out-of order between two which stay
         if(@res >= 3
            && $x==$res[0][0] && $x==$res[1][0] && $x==$res[2][0]
-           && ($y < $res[0][1] && $y < $res[1][1]
-               && $res[0][1] < $res[2][1] && $res[1][1] < $res[2][1]))
+           && ($y < $res[0][1] && $y < $res[1][1] && $res[0][1] < $res[2][1] && $res[1][1] < $res[2][1]))
         {   $unchanged = 0;
             splice @res, 0, 2;
         }
 
         if(@res >= 3
            && $y==$res[0][1] && $y==$res[1][1] && $y==$res[2][1]
-           && ($x < $res[0][0] && $x < $res[1][0]
-               && $res[0][0] < $res[2][0] && $res[1][0] < $res[2][0]))
+           && ($x < $res[0][0] && $x < $res[1][0] && $res[0][0] < $res[2][0] && $res[1][0] < $res[2][0]))
         {   $unchanged = 0;
             splice @res, 0, 2;
         }
@@ -297,8 +291,7 @@ sub polygon_equal($$;$)
 
     if(defined $tolerance)
     {    while(@f)
-         {    return 0 if abs($f[0][0]-$s[0][0]) > $tolerance
-                       || abs($f[0][1]-$s[0][1]) > $tolerance;
+         {    return 0 if abs($f[0][0]-$s[0][0]) > $tolerance || abs($f[0][1]-$s[0][1]) > $tolerance;
               shift @f; shift @s;
          }
          return 1;
@@ -401,9 +394,16 @@ sub polygon_contains_point($@)
 Returns the centroid location of the polygon.
 
 The last point of the list must be the same as the first (must be
-'closed') to produce a correct result.  When the polygon is very flat,
-it will not produce a stable result: minor changes in single coordinates
-will move the centroid too far.
+'closed') to produce a correct result.
+
+B<warning:> When the polygon is very flat, it will not produce a
+stable result: minor changes in single coordinates will move the
+centroid too far.
+
+B<warning:> When the polygon is very small and/or far from the origin
+C<(0,0)>, (as often happens when processing geo coordinates) then rounding
+errors will have a large impact.  In this case, either move the polygon
+closer to the origin first, or use M<Math::BigFloat> coordinates.
 
 The algorithm was found at
 F<http://en.wikipedia.org/wiki/Centroid#Of_a_polygon>
@@ -421,8 +421,8 @@ sub polygon_centroid(@)
     my ($cx, $cy, $a) = (0, 0, 0);
     foreach my $i (0..@_-2)
     {    my $ap =   $_[$i][0] * $_[$i+1][1] - $_[$i+1][0] * $_[$i][1];
-         $cx   += ( $_[$i][0] + $_[$i+1][0]) * $ap;
-         $cy   += ( $_[$i][1] + $_[$i+1][1]) * $ap;
+         $cx   += ( $_[$i][0] + $_[$i+1][0] ) * $ap;
+         $cy   += ( $_[$i][1] + $_[$i+1][1] ) * $ap;
          $a    += $ap;
     }
 
