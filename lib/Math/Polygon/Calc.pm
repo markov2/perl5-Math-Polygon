@@ -306,7 +306,7 @@ sub polygon_equal($$;$)
 }
 
 =function polygon_same \@points1, \@points2, [$tolerance]
-Compare two polygons, where the polygons may be rotated or mirrored
+[1.12] Compare two polygons, where the polygons may be rotated or mirrored
 wrt each other. This is (much) slower than M<polygon_equal()>, but some
 algorithms will cause un unpredictable rotation in the result.
 =cut

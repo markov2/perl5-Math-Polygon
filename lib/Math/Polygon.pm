@@ -209,6 +209,10 @@ Returns the centroid location of the polygon.  The last point of the list
 must be the same as the first to produce a correct result.  The computed
 result is cached.  Function M<Math::Polygon::Calc::polygon_centroid()>.
 
+B<Be aware> that this algorithm does not like very flat polygons.  Also,
+small polygons far from the origin (typical in geo applications) will
+suffer from rounding errors: translate them to the origin first.
+
 =example
   my $center = $poly->centroid;
   my ($cx, $cy) = @$center;
@@ -337,9 +341,9 @@ sub equal($;@)
 }
 
 =method same <$other_polygon | \@points, [$tolerance]> | @points
-Compare two polygons, where the polygons may be rotated wrt each
-other. This is (much) slower than M<equal()>, but some algorithms
-will cause un unpredictable rotation in the result.
+[1.12] Compare two polygons, where the polygons may be rotated or
+mirrored wrt each other. This is (much) slower than M<equal()>, but
+some algorithms will cause un unpredictable rotation in the result.
 Function M<Math::Polygon::Calc::polygon_same()>.
 
 =examples
