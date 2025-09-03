@@ -7,10 +7,12 @@ explicitly stated differently.
    paper with nice algorithm: http://citeseer.ist.psu.edu/cache/papers/cs/25021/http:zSzzSzfractal.dam.fmph.uniba.skzSz~sccgzSzproceedingszSz1998zSzZalik.pdf/zalik98quick.pdf
 20121024 Request by Rick Rutgers: widening polygon contour
 
-version 1.12:
+version 2.00:
 
 	Changes:
 	- Log::Report replaces die and Carp.
+	- requires Perl 5.16 (2012)
+	- convert to OODoc 3.03 release process.
 
 	Fixes:
 	- polygon_same must also consider a mirrored result.
