@@ -4,10 +4,14 @@
 #oodist: testing, however the code of this development version may be broken!
 
 package Math::Polygon::Surface;
-use Math::Polygon;
 
 use strict;
 use warnings;
+
+use Log::Report   'math-polygon';
+use Scalar::Util  qw/blessed/;
+
+use Math::Polygon ();
 
 #--------------------
 =chapter NAME
@@ -38,11 +42,11 @@ and Y, but better pass Math::Polygon objects.
 
 =option  outer $polygon
 =default outer undef
-The outer polygon, a Math::Polygon.
+The outer $polygon, a Math::Polygon.
 
 =option  inner \@polygons
 =default inner []
-The inner polygons, zero or more Math::Polygon objects.
+The inner @polygons, zero or more Math::Polygon objects.
 
 =error surface requires outer polygon
 =cut
@@ -54,9 +58,9 @@ sub new(@)
 
 	while(@_)
 	{	if(!ref $_[0]) { my $k = shift; $options{$k} = shift }
-		elsif(ref $_[0] eq 'ARRAY')        {push @poly, shift}
-		elsif($_[0]->isa('Math::Polygon')) {push @poly, shift}
-		else { die "Illegal argument $_[0]" }
+		elsif(ref $_[0] eq 'ARRAY')        { push @poly, shift }
+		elsif(blessed $_[0] && $_[0]->isa('Math::Polygon')) { push @poly, shift }
+		else { panic "illegal argument $_[0]" }
 	}
 
 	$options{_poly} = \@poly if @poly;
@@ -71,9 +75,7 @@ sub init($$)
 	{	($outer, @inner) = @{$args->{_poly}};
 	}
 	else
-	{	$outer = $args->{outer}
-			or die "ERROR: surface requires outer polygon\n";
-
+	{	$outer = $args->{outer} or error __"surface requires outer polygon";
 		@inner = @{$args->{inner}} if defined $args->{inner};
 	}
 
@@ -100,7 +102,7 @@ sub outer() { $_[0]->{MS_outer} }
 Returns a list (often empty) of inner polygons.
 =cut
 
-sub inner() { @{ $_[0]->{MS_inner}} }
+sub inner() { @{$_[0]->{MS_inner}} }
 
 #--------------------
 =section Simple calculations

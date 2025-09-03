@@ -4,7 +4,7 @@
 #oodist: testing, however the code of this development version may be broken!
 
 package Math::Polygon::Clip;
-use base 'Exporter';
+use parent 'Exporter';
 
 use strict;
 use warnings;
@@ -14,9 +14,10 @@ our @EXPORT = qw/
 	polygon_fill_clip1
 /;
 
-use Math::Polygon::Calc;
+use Log::Report  'math-polygon';
+use List::Util    qw/min max/;
 
-use List::Util qw/min max/;
+use Math::Polygon::Calc;
 
 sub _inside($$);
 sub _cross($$$);

@@ -9,6 +9,9 @@ explicitly stated differently.
 
 version 1.12:
 
+	Changes:
+	- Log::Report replaces die and Carp.
+
 	Fixes:
 	- polygon_same must also consider a mirrored result.
 	  rt.cpan.org#169305 [Graham Knop]

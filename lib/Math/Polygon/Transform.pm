@@ -4,14 +4,14 @@
 #oodist: testing, however the code of this development version may be broken!
 
 package Math::Polygon::Transform;
-use base 'Exporter';
+use parent 'Exporter';
 
 use strict;
 use warnings;
 
+use Log::Report  'math-polygon';
 use Math::Trig   qw/deg2rad pi rad2deg/;
 use POSIX        qw/floor/;
-use Carp         qw/carp/;
 
 our @EXPORT = qw/
 	polygon_resize
@@ -242,7 +242,7 @@ sub polygon_mirror(@)
 		}
 	}
 	else
-	{	carp "ERROR: you need to specify 'x', 'y', 'rc', or 'line'";
+	{	error __"you need to specify 'x', 'y', 'rc', or 'line'";
 	}
 
 	unless(defined $rc)    # vertical

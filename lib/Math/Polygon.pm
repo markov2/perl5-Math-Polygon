@@ -8,6 +8,8 @@ package Math::Polygon;
 use strict;
 use warnings;
 
+use Log::Report     'math-polygon';
+
 # Include all implementations
 use Math::Polygon::Calc;
 use Math::Polygon::Clip;
@@ -35,6 +37,9 @@ Math::Polygon - Class for maintaining polygon data
   if($poly->contains($point)) { ... };
 
   my $boxed  = $poly->lineClip($xmin, $xmax, $ymin, $ymax);
+
+  # Stack-trace about errors, add this to your script:
+  use Log::Report mode => "DEBUG";
 
 =chapter DESCRIPTION
 
@@ -236,8 +241,8 @@ the polygon), and the result is therefore cached.
 
 sub isClockwise()
 {	my $self = shift;
-	return $self->{MP_clockwise} if exists $self->{MP_clockwise};
-	$self->{MP_clockwise} = polygon_is_clockwise $self->points;
+	return $self->{MP_clockwise} if defined $self->{MP_clockwise};  # undef == unknown here
+	$self->{MP_clockwise} = (polygon_is_clockwise $self->points) || 0;
 }
 
 =method clockwise

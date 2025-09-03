@@ -8,12 +8,13 @@
 # Original contributed implementation in Perl by Jari Turkia.
 
 package Math::Polygon::Convex;
-use base 'Exporter';
+use parent 'Exporter';
 
 use strict;
 use warnings;
 
-use Math::Polygon;
+use Log::Report     'math-polygon';
+use Math::Polygon   ();
 
 our @EXPORT = qw/
 	chainHull_2D

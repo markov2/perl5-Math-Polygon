@@ -2,10 +2,9 @@
 #oodist: This file contains OODoc-style documentation which will get stripped
 #oodist: during its release in the distribution.  You can use this file for
 #oodist: testing, however the code of this development version may be broken!
-#oorestyle: use of deprecated Carp: use Log::Report
 
 package Math::Polygon::Calc;
-use base 'Exporter';
+use parent 'Exporter';
 
 use strict;
 use warnings;
@@ -29,8 +28,8 @@ our @EXPORT = qw/
 	polygon_format
 /;
 
+use Log::Report   'math-polygon';
 use List::Util    qw/min max/;
-use Carp          qw/croak/;
 
 #--------------------
 =chapter NAME
@@ -105,7 +104,7 @@ sub polygon_is_clockwise(@)
 {	my $area  = 0;
 
 	polygon_is_closed(@_)
-		or croak "ERROR: polygon must be closed: begin==end";
+		or error __"polygon must be closed: begin==end";
 
 	while(@_ >= 2)
 	{	$area += $_[0][0]*$_[1][1] - $_[0][1]*$_[1][0];
@@ -355,7 +354,7 @@ sub polygon_contains_point($@)
 	my $inside  = 0;
 
 	polygon_is_closed(@_)
-		or croak "ERROR: polygon must be closed: begin==end";
+		or error __"polygon must be closed: begin==end";
 
 	my ($px, $py) = @{ (shift) };
 
@@ -411,12 +410,13 @@ closer to the origin first, or use Math::BigFloat coordinates.
 The algorithm was found at
 L<https://en.wikipedia.org/wiki/Centroid#Of_a_polygon>
 
+=error polygon points on a line, so no centroid
 =cut
 
 sub polygon_centroid(@)
 {
 	polygon_is_closed(@_)
-		or croak "ERROR: polygon must be closed: begin==end";
+		or error __"polygon must be closed: begin==end";
 
 	return [ ($_[0][0] + $_[1][0])/2, ($_[0][1] + $_[1][1])/2 ]
 		if @_==3;  # line
@@ -430,17 +430,18 @@ sub polygon_centroid(@)
 	}
 
 	$a != 0
-		or croak "ERROR: polygon points on a line, so no centroid";
+		or error __"polygon points on a line, so no centroid";
 
 	my $c = 3*$a; # 6*$a/2;
 	[ $cx/$c, $cy/$c ];
 }
 
 =function polygon_is_closed @points
+=error empty polygon is neither closed nor open
 =cut
 
 sub polygon_is_closed(@)
-{	@_ or croak "ERROR: empty polygon is neither closed nor open";
+{	@_ or error __"empty polygon is neither closed nor open";
 
 	my ($first, $last) = @_[0,-1];
 	$first->[0]==$last->[0] && $first->[1]==$last->[1];
