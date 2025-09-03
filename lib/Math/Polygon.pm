@@ -1,49 +1,52 @@
-# This code is part of distribution Math-Polygon.  Meta-POD processed with
-# OODoc into POD and HTML manual-pages.  See README.md
-# Copyright Mark Overmeer.  Licensed under the same terms as Perl itself.
+#oodist: *** DO NOT USE THIS VERSION FOR PRODUCTION ***
+#oodist: This file contains OODoc-style documentation which will get stripped
+#oodist: during its release in the distribution.  You can use this file for
+#oodist: testing, however the code of this development version may be broken!
 
 package Math::Polygon;
 
 use strict;
 use warnings;
 
+# Include all implementations
 use Math::Polygon::Calc;
 use Math::Polygon::Clip;
 use Math::Polygon::Transform;
 
+#--------------------
 =chapter NAME
 
 Math::Polygon - Class for maintaining polygon data
 
 =chapter SYNOPSIS
 
- my $poly = Math::Polygon->new( [1,2], [2,4], [5,7], [1,2] );
- print $poly->nrPoints;
- my @p    = $poly->points;
+  my $poly = Math::Polygon->new( [1,2], [2,4], [5,7], [1,2] );
+  print $poly->nrPoints;
+  my @p    = $poly->points;
 
- my ($xmin, $ymin, $xmax, $ymax) = $poly->bbox;
+  my ($xmin, $ymin, $xmax, $ymax) = $poly->bbox;
 
- my $area   = $poly->area;
- my $l      = $poly->perimeter;
- if($poly->isClockwise) { ... };
- 
- my $rot    = $poly->startMinXY;
- my $center = $poly->centroid;
- if($poly->contains($point)) { ... };
+  my $area   = $poly->area;
+  my $l      = $poly->perimeter;
+  if($poly->isClockwise) { ... };
 
- my $boxed  = $poly->lineClip($xmin, $xmax, $ymin, $ymax);
+  my $rot    = $poly->startMinXY;
+  my $center = $poly->centroid;
+  if($poly->contains($point)) { ... };
+
+  my $boxed  = $poly->lineClip($xmin, $xmax, $ymin, $ymax);
 
 =chapter DESCRIPTION
 
 This class provides an Object Oriented interface around
-M<Math::Polygon::Calc>, M<Math::Polygon::Clip>, and other.  Together,
+Math::Polygon::Calc, Math::Polygon::Clip, and other.  Together,
 these modules provide basic transformations on 2D polygons in pure perl.
 
 B<WARNING:> these computations may show platform dependent rounding
 differences.  These may also originate from compilation options of
 the Perl version you installed.
 
-B<TIP:> When you need better accuracy, you may use M<Math::BigFloat>
+B<TIP:> When you need better accuracy, you may use Math::BigFloat
 as coordinate values.  Of course, this has a considerable price in
 performance.
 
@@ -70,60 +73,59 @@ See M<points()> and M<nrPoints()>.
 Is not specified, it will be computed by the M<isClockwise()> method
 on demand.
 
-=option  bbox [$xmin,$ymin, $xmax,$ymax] 
+=option  bbox [$xmin,$ymin, $xmax,$ymax]
 =default bbox undef
 Usually computed from the shape automatically, but can also be
 overruled. See M<bbox()>.
 
 =example creation of new polygon
- my $p = Math::Polygon->new([1,0],[1,1],[0,1],[0,0],[1,0]);
+  my $p = Math::Polygon->new([1,0],[1,1],[0,1],[0,0],[1,0]);
 
- my @p = ([1,0],[1,1],[0,1],[0,0],[1,0]);
- my $p = Math::Polygon->new(points => \@p);
+  my @p = ([1,0],[1,1],[0,1],[0,0],[1,0]);
+  my $p = Math::Polygon->new(points => \@p);
 =cut
 
 sub new(@)
-{   my $thing = shift;
-    my $class = ref $thing || $thing;
+{	my $thing = shift;
+	my $class = ref $thing || $thing;
 
-    my @points;
-    my %options;
-    if(ref $thing)
-    {   $options{clockwise} = $thing->{MP_clockwise};
-    }
+	my @points;
+	my %options;
+	if(ref $thing)
+	{	$options{clockwise} = $thing->{MP_clockwise};
+	}
 
-    while(@_)
-    {   if(ref $_[0] eq 'ARRAY') {push @points, shift}
-        else { my $k = shift; $options{$k} = shift }
-    }
-    $options{_points} = \@points;
+	while(@_)
+	{	if(ref $_[0] eq 'ARRAY') { push @points, shift }
+		else { my $k = shift; $options{$k} = shift }
+	}
+	$options{_points} = \@points;
 
-    (bless {}, $class)->init(\%options);
+	(bless {}, $class)->init(\%options);
 }
 
 sub init($$)
-{   my ($self, $args) = @_;
-    $self->{MP_points}    = $args->{points} || $args->{_points};
-    $self->{MP_clockwise} = $args->{clockwise};
-    $self->{MP_bbox}      = $args->{bbox};
-    $self;
+{	my ($self, $args) = @_;
+	$self->{MP_points}    = $args->{points} || $args->{_points};
+	$self->{MP_clockwise} = $args->{clockwise};
+	$self->{MP_bbox}      = $args->{bbox};
+	$self;
 }
 
-#------------------
-
+#--------------------
 =section Attributes
 
 =method nrPoints
 Returns the number of points,
 =cut
 
-sub nrPoints() { scalar @{shift->{MP_points}} }
+sub nrPoints() { scalar @{ $_[0]->{MP_points}} }
 
 =method order
 Returns the number of (unique?) points: one less than M<nrPoints()>.
 =cut
 
-sub order() { @{shift->{MP_points}} -1 }
+sub order() { @{ $_[0]->{MP_points}} -1 }
 
 =method points [FORMAT]
 In LIST context, the points are returned as list, otherwise as
@@ -144,10 +146,10 @@ See M<Math::Polygon::Calc::polygon_format()>.
 =cut
 
 sub points(;$)
-{   my ($self, $format) = @_;
+{	my ($self, $format) = @_;
 	my $points = $self->{MP_points};
 	$points    = [ polygon_format $format, @$points ] if $format;
-    wantarray ? @$points : $points;
+	wantarray ? @$points : $points;
 }
 
 =method point $index, [$index,...]
@@ -159,12 +161,11 @@ only the first $index is used.
 =cut
 
 sub point(@)
-{   my $points = shift->{MP_points};
-    wantarray ? @{$points}[@_] : $points->[shift];
+{	my $points = shift->{MP_points};
+	wantarray ? @{$points}[@_] : $points->[shift];
 }
 
-#------------------
-
+#--------------------
 =section Geometry
 
 =method bbox
@@ -179,12 +180,12 @@ Function M<Math::Polygon::Calc::polygon_bbox()>.
 =cut
 
 sub bbox()
-{   my $self = shift;
-    return @{$self->{MP_bbox}} if $self->{MP_bbox};
+{	my $self = shift;
+	return @{$self->{MP_bbox}} if $self->{MP_bbox};
 
-    my @bbox = polygon_bbox $self->points;
-    $self->{MP_bbox} = \@bbox;
-    @bbox;
+	my @bbox = polygon_bbox $self->points;
+	$self->{MP_bbox} = \@bbox;
+	@bbox;
 }
 
 =method area
@@ -199,9 +200,9 @@ Function M<Math::Polygon::Calc::polygon_area()>.
 =cut
 
 sub area()
-{   my $self = shift;
-    return $self->{MP_area} if defined $self->{MP_area};
-    $self->{MP_area} = polygon_area $self->points;
+{	my $self = shift;
+	return $self->{MP_area} if defined $self->{MP_area};
+	$self->{MP_area} = polygon_area $self->points;
 }
 
 =method centroid
@@ -220,9 +221,8 @@ suffer from rounding errors: translate them to the origin first.
 =cut
 
 sub centroid()
-{   my $self = shift;
-    return $self->{MP_centroid} if $self->{MP_centroid};
-    $self->{MP_centroid} = polygon_centroid $self->points;
+{	my $self = shift;
+	$self->{MP_centroid} //= polygon_centroid $self->points;
 }
 
 =method isClockwise
@@ -235,9 +235,9 @@ the polygon), and the result is therefore cached.
 =cut
 
 sub isClockwise()
-{   my $self = shift;
-    return $self->{MP_clockwise} if defined $self->{MP_clockwise};
-    $self->{MP_clockwise} = polygon_is_clockwise $self->points;
+{	my $self = shift;
+	return $self->{MP_clockwise} if exists $self->{MP_clockwise};
+	$self->{MP_clockwise} = polygon_is_clockwise $self->points;
 }
 
 =method clockwise
@@ -248,12 +248,12 @@ Make sure the points are in clockwise order.
 =cut
 
 sub clockwise()
-{   my $self = shift;
-    return $self if $self->isClockwise;
+{	my $self = shift;
+	return $self if $self->isClockwise;
 
-    $self->{MP_points}    = [ reverse $self->points ];
-    $self->{MP_clockwise} = 1;
-    $self;
+	$self->{MP_points}    = [ reverse $self->points ];
+	$self->{MP_clockwise} = 1;
+	$self;
 }
 
 =method counterClockwise
@@ -264,12 +264,12 @@ Make sure the points are in counter-clockwise order.
 =cut
 
 sub counterClockwise()
-{   my $self = shift;
-    return $self unless $self->isClockwise;
+{	my $self = shift;
+	$self->isClockwise or return $self;
 
-    $self->{MP_points}    = [ reverse $self->points ];
-    $self->{MP_clockwise} = 0;
-    $self;
+	$self->{MP_points}    = [ reverse $self->points ];
+	$self->{MP_clockwise} = 0;
+	$self;
 }
 
 =method perimeter
@@ -279,11 +279,11 @@ a line is presumed; for a polygon they must match.
 Function M<Math::Polygon::Calc::polygon_perimeter()>.
 
 =example
- my $fence = $poly->perimeter;
- print "fence length: $fence $poly_units\n"
+  my $fence = $poly->perimeter;
+  print "fence length: $fence $poly_units\n"
 =cut
 
-sub perimeter() { polygon_perimeter shift->points }
+sub perimeter() { polygon_perimeter $_[0]->points }
 
 =method startMinXY
 Returns a new polygon object, where the points are rotated in such a way
@@ -294,8 +294,8 @@ Function M<Math::Polygon::Calc::polygon_start_minxy()>.
 =cut
 
 sub startMinXY()
-{   my $self = shift;
-    $self->new(polygon_start_minxy $self->points);
+{	my $self = shift;
+	$self->new(polygon_start_minxy $self->points);
 }
 
 =method beautify %options
@@ -312,9 +312,9 @@ by this module beautify them.  A new polygon is returned.
 =cut
 
 sub beautify(@)
-{   my ($self, %opts) = @_;
-    my @beauty = polygon_beautify \%opts, $self->points;
-    @beauty > 2 ? $self->new(points => \@beauty) : ();
+{	my ($self, %args) = @_;
+	my @beauty = polygon_beautify \%args, $self->points;
+	@beauty > 2 ? $self->new(points => \@beauty) : ();
 }
 
 =method equal <$other | \@points,[$tolerance]> | $points
@@ -330,14 +330,14 @@ Function M<Math::Polygon::Calc::polygon_equal()>.
 =cut
 
 sub equal($;@)
-{   my $self  = shift;
-    my ($other, $tolerance);
-    if(@_ > 2 || ref $_[1] eq 'ARRAY') { $other = \@_ }
-    else
-    {   $other     = ref $_[0] eq 'ARRAY' ? shift : shift->points;
-        $tolerance = shift;
-    }
-    polygon_equal scalar($self->points), $other, $tolerance;
+{	my $self  = shift;
+	my ($other, $tolerance);
+	if(@_ > 2 || ref $_[1] eq 'ARRAY') { $other = \@_ }
+	else
+	{	$other     = ref $_[0] eq 'ARRAY' ? shift : shift->points;
+		$tolerance = shift;
+	}
+	polygon_equal scalar($self->points), $other, $tolerance;
 }
 
 =method same <$other_polygon | \@points, [$tolerance]> | @points
@@ -354,14 +354,14 @@ Function M<Math::Polygon::Calc::polygon_same()>.
 =cut
 
 sub same($;@)
-{   my $self = shift;
-    my ($other, $tolerance);
-    if(@_ > 2 || ref $_[1] eq 'ARRAY') { $other = \@_ }
-    else
-    {   $other     = ref $_[0] eq 'ARRAY' ? shift : shift->points;
-        $tolerance = shift;
-    }
-    polygon_same scalar($self->points), $other, $tolerance;
+{	my $self = shift;
+	my ($other, $tolerance);
+	if(@_ > 2 || ref $_[1] eq 'ARRAY') { $other = \@_ }
+	else
+	{	$other     = ref $_[0] eq 'ARRAY' ? shift : shift->points;
+		$tolerance = shift;
+	}
+	polygon_same scalar($self->points), $other, $tolerance;
 }
 
 =method contains $point
@@ -370,8 +370,8 @@ or not.  On the edge is inside.
 =cut
 
 sub contains($)
-{   my ($self, $point) = @_;
-    polygon_contains_point($point, $self->points);
+{	my ($self, $point) = @_;
+	polygon_contains_point($point, $self->points);
 }
 
 =method distance $point
@@ -380,8 +380,8 @@ the polygon, zero if the point is on an edge.
 =cut
 
 sub distance($)
-{   my ($self, $point) = @_;
-    polygon_distance($point, $self->points);
+{	my ($self, $point) = @_;
+	polygon_distance($point, $self->points);
 }
 
 =method isClosed
@@ -391,11 +391,10 @@ as the last point.
 
 sub isClosed() { polygon_is_closed(shift->points) }
 
-#------------------
-
+#--------------------
 =section Transformations
 
-Implemented in M<Math::Polygon::Transform>: changes on the structure of
+Implemented in Math::Polygon::Transform: changes on the structure of
 the polygon except clipping.  All functions return a new polygon object
 or undef.
 
@@ -423,21 +422,21 @@ Specific scaling factor in the vertical direction.
 =cut
 
 sub resize(@)
-{   my $self = shift;
+{	my $self = shift;
 
-    my $clockwise = $self->{MP_clockwise};
-    if(defined $clockwise)
-    {   my %args   = @_;
-        my $xscale = $args{xscale} || $args{scale} || 1;
-        my $yscale = $args{yscale} || $args{scale} || 1;
-        $clockwise = not $clockwise if $xscale * $yscale < 0;
-    }
+	my $clockwise = $self->{MP_clockwise};
+	if(defined $clockwise)
+	{	my %args   = @_;
+		my $xscale = $args{xscale} || $args{scale} || 1;
+		my $yscale = $args{yscale} || $args{scale} || 1;
+		$clockwise = not $clockwise if $xscale * $yscale < 0;
+	}
 
-    (ref $self)->new
-       ( points    => [ polygon_resize @_, $self->points ]
-       , clockwise => $clockwise
-       # we could save the bbox calculation as well
-       );
+	(ref $self)->new(
+		points    => [ polygon_resize @_, $self->points ],
+		clockwise => $clockwise,
+		# we could save the bbox calculation as well
+	);
 }
 
 =method move %options
@@ -455,13 +454,13 @@ Displacement in the vertical direction.
 =cut
 
 sub move(@)
-{   my $self = shift;
+{	my $self = shift;
 
-    (ref $self)->new
-       ( points    => [ polygon_move @_, $self->points ]
-       , clockwise => $self->{MP_clockwise}
-       , bbox      => $self->{MP_bbox}
-       );
+	(ref $self)->new(
+		points    => [ polygon_move @_, $self->points ],
+		clockwise => $self->{MP_clockwise},
+		bbox      => $self->{MP_bbox},
+	);
 }
 
 =method rotate %options
@@ -482,13 +481,13 @@ specify rotation angle in rads (between -pi and 2*pi)
 =cut
 
 sub rotate(@)
-{   my $self = shift;
+{	my $self = shift;
 
-    (ref $self)->new
-       ( points    => [ polygon_rotate @_, $self->points ]
-       , clockwise => $self->{MP_clockwise}
-       # we could save the bbox calculation as well
-       );
+	(ref $self)->new(
+		points    => [ polygon_rotate @_, $self->points ],
+		clockwise => $self->{MP_clockwise},
+		# we could save the bbox calculation as well
+	);
 }
 
 =method grid %options
@@ -504,13 +503,12 @@ no transformation will take place.
 =cut
 
 sub grid(@)
-{   my $self = shift;
+{	my $self = shift;
 
-    (ref $self)->new
-       ( points    => [ polygon_grid @_, $self->points ]
-       , clockwise => $self->{MP_clockwise}  # probably
-       # we could save the bbox calculation as well
-       );
+	(ref $self)->new(
+		points    => [ polygon_grid @_, $self->points ],
+		clockwise => $self->{MP_clockwise},  # probably we could save the bbox calculation as well
+	);
 }
 
 =method mirror %options
@@ -518,41 +516,41 @@ Mirror the polygon in a line.  Only one of the options can be provided.
 Some programs call this "flip" or "flop".
 
 =option  x FLOAT
-=default x C<undef>
-Mirror in the line C<x=value>, which means that C<y> stays unchanged.
+=default x undef
+Mirror in the line C<x=value>, which means that P<y> stays unchanged.
 
 =option  y FLOAT
-=default y C<undef>
-Mirror in the line C<y=value>, which means that C<x> stays unchanged.
+=default y undef
+Mirror in the line C<y=value>, which means that P<x> stays unchanged.
 
 =option  rc FLOAT
-=default rc C<undef>
+=default rc undef
 Description of the line which is used to mirror in. The line is
-C<y= rc*x+b>.  The C<rc> equals C<-dy/dx>, the firing angle.  If
-C<undef> is explicitly specified then C<b> is used as constant x: it's
+C<y= rc*x+b>.  The P<rc> equals C<-dy/dx>, the firing angle.  If
+undef is explicitly specified then P<b> is used as constant x: it's
 a vertical mirror.
 
 =option  b  FLOAT
 =default b  C<0>
-Only used in combination with option C<rc> to describe a line.
+Only used in combination with option P<rc> to describe a line.
 
 =option  line [POINT, POINT]
 =default line <undef>
-Alternative way to specify the mirror line.  The C<rc> and C<b> are
+Alternative way to specify the mirror line.  The P<rc> and P<b> are
 computed from the two points of the line.
 =cut
 
 sub mirror(@)
-{   my $self = shift;
+{	my $self = shift;
 
-    my $clockwise = $self->{MP_clockwise};
-    $clockwise    = not $clockwise if defined $clockwise;
+	my $clockwise = $self->{MP_clockwise};
+	$clockwise    = not $clockwise if defined $clockwise;
 
-    (ref $self)->new
-       ( points    => [ polygon_mirror @_, $self->points ]
-       , clockwise => $clockwise
-       # we could save the bbox calculation as well
-       );
+	(ref $self)->new(
+		points    => [ polygon_mirror @_, $self->points ],
+		clockwise => $clockwise,
+		# we could save the bbox calculation as well
+	);
 }
 
 =method simplify %options
@@ -565,34 +563,33 @@ The distance between two points to be considered "the same" point.  The value
 is used as radius of the circle.
 
 =option  slope FLOAT
-=default slope C<undef>
+=default slope undef
 With three points X(n),X(n+1),X(n+2), the point X(n+1) will be removed if
-the length of the path over all three points is less than C<slope> longer
+the length of the path over all three points is less than P<slope> longer
 than the direct path between X(n) and X(n+2).
 
 The slope will not be removed around the starting point of the polygon.
 Removing points will change the area of the polygon.
 
 =option  max_points INTEGER
-=default max_points C<undef>
-First, C<same> and C<slope> reduce the number of points.  Then, if there
+=default max_points undef
+First, P<same> and P<slope> reduce the number of points.  Then, if there
 are still more than the specified number of points left, the points with
 the widest angles will be removed until the specified maximum number is
 reached.
 =cut
 
 sub simplify(@)
-{   my $self = shift;
+{	my $self = shift;
 
-    (ref $self)->new
-       ( points    => [ polygon_simplify @_, $self->points ]
-       , clockwise => $self->{MP_clockwise}  # probably
-       , bbox      => $self->{MP_bbox}       # protect bounds
-       );
+	(ref $self)->new(
+		points    => [ polygon_simplify @_, $self->points ],
+		clockwise => $self->{MP_clockwise},
+		bbox      => $self->{MP_bbox},       # protect bounds
+	);
 }
 
-#------------------
-
+#--------------------
 =section Clipping
 
 =method lineClip $box
@@ -602,8 +599,8 @@ Function M<Math::Polygon::Clip::polygon_line_clip()>.
 =cut
 
 sub lineClip($$$$)
-{   my ($self, @bbox) = @_;
-    polygon_line_clip \@bbox, $self->points;
+{	my ($self, @bbox) = @_;
+	polygon_line_clip \@bbox, $self->points;
 }
 
 =method fillClip1 $box
@@ -613,20 +610,18 @@ the $box are mapped on the borders.  The polygon stays in one piece,
 but may have vertices which are followed in two directions.
 
 Returned is one polygon, which is cleaned from double points,
-spikes and superfluous intermediate points, or C<undef> when
+spikes and superfluous intermediate points, or undef when
 no polygon is outside the $box.
 Function M<Math::Polygon::Clip::polygon_fill_clip1()>.
 =cut
 
 sub fillClip1($$$$)
-{   my ($self, @bbox) = @_;
-    my @clip = polygon_fill_clip1 \@bbox, $self->points;
-    @clip or return undef;
-    $self->new(points => \@clip);
+{	my ($self, @bbox) = @_;
+	my @clip = polygon_fill_clip1 \@bbox, $self->points;
+	@clip ? $self->new(points => \@clip) : undef;
 }
 
-#-------------
-
+#--------------------
 =section Display
 
 =method string [FORMAT]
@@ -638,8 +633,8 @@ first.  This may hide platform dependent rounding differences.
 =cut
 
 sub string(;$)
-{   my ($self, $format) = @_;
-    polygon_string($self->points($format));
+{	my ($self, $format) = @_;
+	polygon_string $self->points($format);
 }
 
 1;
