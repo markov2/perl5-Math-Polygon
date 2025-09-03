@@ -43,6 +43,10 @@ B<WARNING:> these computations may show platform dependent rounding
 differences.  These may also originate from compilation options of
 the Perl version you installed.
 
+B<TIP:> When you need better accuracy, you may use M<Math::BigFloat>
+as coordinate values.  Of course, this has a considerable price in
+performance.
+
 =chapter METHODS
 
 =section Constructors

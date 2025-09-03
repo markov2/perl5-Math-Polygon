@@ -14,8 +14,9 @@ version 1.12:
 	  rt.cpan.org#169305 [Graham Knop]
 
 	Improvements:
-	- warn about the instability of centoid.
+	- warn about the instability of centroid.
 	  rt.cpan.org#169306 [Graham Knop]
+	- tip use of Math::BigFloat
 
 version 1.11: Fri  2 May 16:57:09 CEST 2025
 
