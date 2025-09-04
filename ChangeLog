@@ -23,6 +23,7 @@ version 2.00:
 	  rt.cpan.org#169306 [Graham Knop]
 	- tip use of Math::BigFloat
 	- restyle code and docs to match OODoc 2.03
+	- all ::Transform functions can have the options as HASH as well
 
 version 1.11: Fri  2 May 16:57:09 CEST 2025
 

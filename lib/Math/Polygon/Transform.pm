@@ -33,13 +33,17 @@ Math::Polygon::Transform - Polygon transformation
 
   my $area = polygon_transform resize => 3.14, @poly;
 
+  # requires [2.00]
+  my $area = polygon_transform +{resize => 3.14}, @poly;
+
 =chapter DESCRIPTION
 
 This package contains polygon transformation algorithms.
 
 =chapter FUNCTIONS
 
-=function polygon_resize %options, @points
+=function polygon_resize %options|\%options, @points
+Make the polygon smaller or larger, with respect to a center.
 
 =option  scale FLOAT
 =default scale C<1.0>
@@ -61,25 +65,28 @@ Specific scaling factor in the vertical direction.
 =cut
 
 sub polygon_resize(@)
-{	my %opts;
-	while(@_ && !ref $_[0])
-	{	my $key     = shift;
-		$opts{$key} = shift;
+{	my $args;
+	if(ref $_[0] eq 'HASH') { $args = shift }
+	else
+	{	while(@_ && !ref $_[0])
+		{	my $key       = shift;
+			$args->{$key} = shift;
+		}
 	}
 
-	my $sx = $opts{xscale} || $opts{scale} || 1.0;
-	my $sy = $opts{yscale} || $opts{scale} || 1.0;
+	my $sx = $args->{xscale} || $args->{scale} || 1.0;
+	my $sy = $args->{yscale} || $args->{scale} || 1.0;
 	return @_ if $sx==1.0 && $sy==1.0;
 
-	my ($cx, $cy)   = defined $opts{center} ? @{$opts{center}} : (0,0);
+	my ($cx, $cy)   = defined $args->{center} ? @{$args->{center}} : (0,0);
 
 	    $cx || $cy
 	  ? map +[ $cx + ($_->[0]-$cx)*$sx,  $cy + ($_->[1]-$cy) * $sy ], @_
 	  : map +[ $_->[0]*$sx, $_->[1]*$sy ], @_;
 }
 
-=function polygon_move %options, @points
-Returns a list of points which are moved over the indicated distance
+=function polygon_move %options|\%options, @points
+Returns a list of points which are moved over the indicated distance.
 
 =option  dx FLOAT
 =default dx 0
@@ -89,22 +96,31 @@ Displacement in the horizontal direction.
 =default dy 0
 Displacement in the vertical direction.
 
+=examples
+  my @moved = polygon_move dx => -5.12, @points;
+  my @moved = polygon_move +{dx => -5.12}, @points; # since [2.00]
+
 =cut
 
 sub polygon_move(@)
-{	my %opts;
-	while(@_ && !ref $_[0])
-	{	my $key     = shift;
-		$opts{$key} = shift;
+{	my $args;
+	if(ref $_[0] eq 'HASH') { $args = shift }
+	else
+	{	while(@_ && !ref $_[0])
+		{	my $key       = shift;
+			$args->{$key} = shift;
+		}
 	}
 
-	my ($dx, $dy) = ($opts{dx}||0, $opts{dy}||0);
+	my ($dx, $dy) = ($args->{dx}||0, $args->{dy}||0);
 	return @_ if $dx==0 && $dy==0;
 
 	map +[ $_->[0] +$dx, $_->[1] +$dy ], @_;
 }
 
-=function polygon_rotate %options, @points
+=function polygon_rotate %options|\%options, @points
+Rotate a polygon around a center.
+
 =option  degrees FLOAT
 =default degrees 0
 specify rotation angle in degrees (between -180 and 360).
@@ -119,16 +135,19 @@ specify rotation angle in rads (between -pi and 2*pi)
 =cut
 
 sub polygon_rotate(@)
-{	my %opts;
-	while(@_ && !ref $_[0])
-	{	my $key     = shift;
-		$opts{$key} = shift;
+{	my $args;
+	if(ref $_[0] eq 'HASH') { $args = shift }
+	else
+	{	while(@_ && !ref $_[0])
+		{	my $key       = shift;
+			$args->{$key} = shift;
+		}
 	}
 
 	my $angle
-	  = exists $opts{radians} ? $opts{radians}
-	  : exists $opts{degrees} ? deg2rad($opts{degrees})
-	  :                         0;
+	  = exists $args->{radians} ? $args->{radians}
+	  : exists $args->{degrees} ? deg2rad($args->{degrees})
+	  :                           0;
 
 	$angle
 		or return @_;
@@ -136,7 +155,7 @@ sub polygon_rotate(@)
 	my $sina = sin($angle);
 	my $cosa = cos($angle);
 
-	my ($cx, $cy)   = defined $opts{center} ? @{$opts{center}} : (0,0);
+	my ($cx, $cy) = defined $args->{center} ? @{$args->{center}} : (0,0);
 	$cx || $cy or return map +[
 		 $cosa * $_->[0] + $sina * $_->[1],
 		-$sina * $_->[0] + $cosa * $_->[1],
@@ -148,7 +167,7 @@ sub polygon_rotate(@)
 	], @_;
 }
 
-=function polygon_grid %options, @points
+=function polygon_grid %options|\%options, @points
 Snap the polygon points to grid points, where artifacts are removed.
 
 =option  raster FLOAT
@@ -160,13 +179,16 @@ no transformation will take place.
 =cut
 
 sub polygon_grid(@)
-{	my %opts;
-	while(@_ && !ref $_[0])
-	{	my $key     = shift;
-		$opts{$key} = shift;
+{	my $args;
+	if(ref $_[0] eq 'HASH') { $args = shift }
+	else
+	{	while(@_ && !ref $_[0])
+		{	my $key       = shift;
+			$args->{$key} = shift;
+		}
 	}
 
-	my $raster = exists $opts{raster} ? $opts{raster} : 1;
+	my $raster = exists $args->{raster} ? $args->{raster} : 1;
 	return @_ if $raster == 0;
 
 	# use fast "int" for gridsize 1
@@ -176,7 +198,7 @@ sub polygon_grid(@)
 	map +[ $raster * floor($_->[0]/$raster + 0.5), $raster * floor($_->[1]/$raster + 0.5) ], @_;
 }
 
-=function polygon_mirror %options, @points
+=function polygon_mirror %options|\%options, @points
 Mirror the polygon in a line.  Only one of the options can be provided.
 Some programs call this "flip" or "flop".
 
@@ -208,30 +230,33 @@ computed from the two points of the line.
 =cut
 
 sub polygon_mirror(@)
-{	my %opts;
-	while(@_ && !ref $_[0])
-	{	my $key     = shift;
-		$opts{$key} = shift;
+{	my $args;
+	if(ref $_[0] eq 'HASH') { $args = shift }
+	else
+	{	while(@_ && !ref $_[0])
+		{	my $key       = shift;
+			$args->{$key} = shift;
+		}
 	}
 
-	if(defined $opts{x})
-	{	my $x2 = 2* $opts{x};
+	if(defined $args->{x})
+	{	my $x2 = 2* $args->{x};
 		return map +[ $x2 - $_->[0], $_->[1] ], @_;
 	}
 
-	if(defined $opts{y})
-	{	my $y2 = 2* $opts{y};
+	if(defined $args->{y})
+	{	my $y2 = 2* $args->{y};
 		return map +[ $_->[0], $y2 - $_->[1] ], @_;
 	}
 
 	# Mirror in line
 
 	my ($rc, $b);
-	if(exists $opts{rc} )
-	{	$rc = $opts{rc};
-		$b  = $opts{b} || 0;
+	if(exists $args->{rc} )
+	{	$rc = $args->{rc};
+		$b  = $args->{b} || 0;
 	}
-	elsif(my $through = $opts{line})
+	elsif(my $through = $args->{line})
 	{	my ($p0, $p1) = @$through;
 		if($p0->[0]==$p1->[0])
 		{	$b = $p0->[0];      # vertical mirror
@@ -259,7 +284,7 @@ sub polygon_mirror(@)
 	} @_;
 }
 
-=function polygon_simplify %options, @points
+=function polygon_simplify %options|\%options, @points
 
 =option  same FLOAT
 =default same C<0.0001>
@@ -293,19 +318,20 @@ sub _angle($$$)
 }
 
 sub polygon_simplify(@)
-{	my %opts;
-	while(@_ && !ref $_[0])
-	{	my $key     = shift;
-		$opts{$key} = shift;
+{	my $args;
+	if(ref $_[0] eq 'HASH') { $args = shift }
+	else
+	{	while(@_ && !ref $_[0])
+		{	my $key       = shift;
+			$args->{$key} = shift;
+		}
 	}
 
-	return unless @_;
+	@_ or return ();
 
 	my $is_ring     = $_[0][0]==$_[-1][0] && $_[0][1]==$_[-1][1];
-
-	my $same        = $opts{same} || 0.0001;
-	my $slope       = $opts{slope};
-
+	my $same        = $args->{same} || 0.0001;
+	my $slope       = $args->{slope};
 	my $changes     = 1;
 
 	while($changes && @_)
@@ -375,7 +401,7 @@ sub polygon_simplify(@)
 		@_ = @new;
 	}
 
-	exists $opts{max_points}
+	exists $args->{max_points}
 		or return @_;
 
 	#
@@ -383,7 +409,7 @@ sub polygon_simplify(@)
 	#
 
 	# Collect all angles
-	my $max_angles = $opts{max_points};
+	my $max_angles = $args->{max_points};
 	my @angles;
 
 	if($is_ring)

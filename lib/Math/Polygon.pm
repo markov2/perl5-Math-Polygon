@@ -38,7 +38,8 @@ Math::Polygon - Class for maintaining polygon data
 
   my $boxed  = $poly->lineClip($xmin, $xmax, $ymin, $ymax);
 
-  # Stack-trace about errors, add this to your script:
+  # [2.00] Stack-trace for errors, add this to your script
+  # to see where your math goes wrong:
   use Log::Report mode => "DEBUG";
 
 =chapter DESCRIPTION
@@ -47,13 +48,13 @@ This class provides an Object Oriented interface around
 Math::Polygon::Calc, Math::Polygon::Clip, and other.  Together,
 these modules provide basic transformations on 2D polygons in pure perl.
 
-B<WARNING:> these computations may show platform dependent rounding
+B<WARNING:> These computations may show platform dependent rounding
 differences.  These may also originate from compilation options of
 the Perl version you installed.
 
-B<TIP:> When you need better accuracy, you may use Math::BigFloat
-as coordinate values.  Of course, this has a considerable price in
-performance.
+B<TIP:> When you need better accuracy, you may use Math::BigFloat to
+represent coordinate values.  Of course, this has a considerable price
+in performance.
 
 =chapter METHODS
 
@@ -81,7 +82,7 @@ on demand.
 =option  bbox [$xmin,$ymin, $xmax,$ymax]
 =default bbox undef
 Usually computed from the shape automatically, but can also be
-overruled. See M<bbox()>.
+overruled (for instance because it is already known). See M<bbox()>.
 
 =example creation of new polygon
   my $p = Math::Polygon->new([1,0],[1,1],[0,1],[0,0],[1,0]);
@@ -127,7 +128,8 @@ Returns the number of points,
 sub nrPoints() { scalar @{ $_[0]->{MP_points}} }
 
 =method order
-Returns the number of (unique?) points: one less than M<nrPoints()>.
+Returns the number of (unique?) points: one less than M<nrPoints()>
+because we (usually) have a closed polygon.
 =cut
 
 sub order() { @{ $_[0]->{MP_points}} -1 }
@@ -292,7 +294,7 @@ sub perimeter() { polygon_perimeter $_[0]->points }
 
 =method startMinXY
 Returns a new polygon object, where the points are rotated in such a way
-that the point which is losest to the left-bottom point of the bounding
+that the point which is closest to the left-bottom point of the bounding
 box has become the first.
 
 Function M<Math::Polygon::Calc::polygon_start_minxy()>.
@@ -308,11 +310,10 @@ Returns a new, beautified version of this polygon.
 Function M<Math::Polygon::Calc::polygon_beautify()>.
 
 Polygons, certainly after some computations, can have a lot of horrible
-artifacts: points which are double, spikes, etc.  This functions provided
-by this module beautify them.  A new polygon is returned.
+artifacts: points which are double, spikes, etc.
 
 =option  remove_spikes BOOLEAN
-=default remove_spikes <false>
+=default remove_spikes false
 
 =cut
 
@@ -322,9 +323,10 @@ sub beautify(@)
 	@beauty > 2 ? $self->new(points => \@beauty) : ();
 }
 
-=method equal <$other | \@points,[$tolerance]> | $points
-Compare two polygons, on the level of points. When the polygons are
-the same but rotated, this will return false. See M<same()>.
+=method equal ($other|\@points, [$tolerance]) | @points
+Compare two polygons on the level of @points. When the polygons are
+the same but rotated or mirrored, this returns false. See M<same()> for
+the more thorrow (and expensive) comparison.
 Function M<Math::Polygon::Calc::polygon_equal()>.
 
 =examples
@@ -345,7 +347,7 @@ sub equal($;@)
 	polygon_equal scalar($self->points), $other, $tolerance;
 }
 
-=method same <$other_polygon | \@points, [$tolerance]> | @points
+=method same ($other|\@points, [$tolerance]) | @points
 [1.12] Compare two polygons, where the polygons may be rotated or
 mirrored wrt each other. This is (much) slower than M<equal()>, but
 some algorithms will cause un unpredictable rotation in the result.
@@ -394,7 +396,7 @@ Returns true if the first point of the poly definition is the same
 as the last point.
 =cut
 
-sub isClosed() { polygon_is_closed(shift->points) }
+sub isClosed() { polygon_is_closed($_[0]->points) }
 
 #--------------------
 =section Transformations
@@ -427,7 +429,7 @@ Specific scaling factor in the vertical direction.
 =cut
 
 sub resize(@)
-{	my $self = shift;
+{	my ($self, %args) = @_;
 
 	my $clockwise = $self->{MP_clockwise};
 	if(defined $clockwise)
@@ -438,7 +440,7 @@ sub resize(@)
 	}
 
 	(ref $self)->new(
-		points    => [ polygon_resize @_, $self->points ],
+		points    => [ polygon_resize \%args, $self->points ],
 		clockwise => $clockwise,
 		# we could save the bbox calculation as well
 	);
@@ -458,11 +460,11 @@ Displacement in the vertical direction.
 
 =cut
 
-sub move(@)
-{	my $self = shift;
+sub move(%)
+{	my ($self, %args) = @_;
 
 	(ref $self)->new(
-		points    => [ polygon_move @_, $self->points ],
+		points    => [ polygon_move \%args, $self->points ],
 		clockwise => $self->{MP_clockwise},
 		bbox      => $self->{MP_bbox},
 	);
@@ -485,11 +487,11 @@ specify rotation angle in rads (between -pi and 2*pi)
 
 =cut
 
-sub rotate(@)
-{	my $self = shift;
+sub rotate(%)
+{	my ($self, %args) = @_;
 
 	(ref $self)->new(
-		points    => [ polygon_rotate @_, $self->points ],
+		points    => [ polygon_rotate \%args, $self->points ],
 		clockwise => $self->{MP_clockwise},
 		# we could save the bbox calculation as well
 	);
@@ -507,12 +509,13 @@ no transformation will take place.
 
 =cut
 
-sub grid(@)
-{	my $self = shift;
+sub grid(%)
+{	my ($self, %args) = @_;
 
 	(ref $self)->new(
-		points    => [ polygon_grid @_, $self->points ],
-		clockwise => $self->{MP_clockwise},  # probably we could save the bbox calculation as well
+		points    => [ polygon_grid \%args, $self->points ],
+		clockwise => $self->{MP_clockwise},
+		# probably we could save the bbox calculation as well
 	);
 }
 
@@ -546,13 +549,13 @@ computed from the two points of the line.
 =cut
 
 sub mirror(@)
-{	my $self = shift;
+{	my ($self, %args) = @_;
 
 	my $clockwise = $self->{MP_clockwise};
 	$clockwise    = not $clockwise if defined $clockwise;
 
 	(ref $self)->new(
-		points    => [ polygon_mirror @_, $self->points ],
+		points    => [ polygon_mirror \%args, $self->points ],
 		clockwise => $clockwise,
 		# we could save the bbox calculation as well
 	);
@@ -585,10 +588,10 @@ reached.
 =cut
 
 sub simplify(@)
-{	my $self = shift;
+{	my ($self, %args) = @_;
 
 	(ref $self)->new(
-		points    => [ polygon_simplify @_, $self->points ],
+		points    => [ polygon_simplify \%args, $self->points ],
 		clockwise => $self->{MP_clockwise},
 		bbox      => $self->{MP_bbox},       # protect bounds
 	);
@@ -598,7 +601,7 @@ sub simplify(@)
 =section Clipping
 
 =method lineClip $box
-Returned is a list of ARRAYS-OF-POINTS containing line pieces
+Returned is a LIST of ARRAYS-of-points containing line pieces
 from the input polygon.
 Function M<Math::Polygon::Clip::polygon_line_clip()>.
 =cut
@@ -634,7 +637,6 @@ Print the polygon.
 
 [1.09] When a FORMAT is specified, all coordinates will get formatted
 first.  This may hide platform dependent rounding differences.
-
 =cut
 
 sub string(;$)
