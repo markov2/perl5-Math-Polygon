@@ -42,7 +42,7 @@ This package contains polygon transformation algorithms.
 
 =chapter FUNCTIONS
 
-=function polygon_resize %options|\%options, @points
+=function polygon_resize [%options|\%options], @points
 Make the polygon smaller or larger, with respect to a center.
 
 =option  scale FLOAT
@@ -85,7 +85,7 @@ sub polygon_resize(@)
 	  : map +[ $_->[0]*$sx, $_->[1]*$sy ], @_;
 }
 
-=function polygon_move %options|\%options, @points
+=function polygon_move [%options|\%options], @points
 Returns a list of points which are moved over the indicated distance.
 
 =option  dx FLOAT
@@ -118,7 +118,7 @@ sub polygon_move(@)
 	map +[ $_->[0] +$dx, $_->[1] +$dy ], @_;
 }
 
-=function polygon_rotate %options|\%options, @points
+=function polygon_rotate [%options|\%options], @points
 Rotate a polygon around a center.
 
 =option  degrees FLOAT
@@ -167,7 +167,7 @@ sub polygon_rotate(@)
 	], @_;
 }
 
-=function polygon_grid %options|\%options, @points
+=function polygon_grid [%options|\%options], @points
 Snap the polygon points to grid points, where artifacts are removed.
 
 =option  raster FLOAT
@@ -198,7 +198,7 @@ sub polygon_grid(@)
 	map +[ $raster * floor($_->[0]/$raster + 0.5), $raster * floor($_->[1]/$raster + 0.5) ], @_;
 }
 
-=function polygon_mirror %options|\%options, @points
+=function polygon_mirror [%options|\%options], @points
 Mirror the polygon in a line.  Only one of the options can be provided.
 Some programs call this "flip" or "flop".
 
@@ -284,7 +284,7 @@ sub polygon_mirror(@)
 	} @_;
 }
 
-=function polygon_simplify %options|\%options, @points
+=function polygon_simplify [%options|\%options], @points
 
 =option  same FLOAT
 =default same C<0.0001>

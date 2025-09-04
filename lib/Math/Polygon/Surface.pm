@@ -80,7 +80,7 @@ sub init($$)
 	}
 
 	foreach ($outer, @inner)
-	{	next unless ref $_ eq 'ARRAY';
+	{	ref $_ eq 'ARRAY' or next;
 		$_ = Math::Polygon->new(points => $_);
 	}
 
@@ -154,7 +154,7 @@ See method M<Math::Polygon::lineClip()>.
 
 sub lineClip($$$$)
 {	my ($self, @bbox) = @_;
-	map { $_->lineClip(@bbox) } $self->outer, $self->inner;
+	map $_->lineClip(@bbox), $self->outer, $self->inner;
 }
 
 =method fillClip1 $box
@@ -168,11 +168,11 @@ All polygons are treated separately.
 sub fillClip1($$$$)
 {	my ($self, @bbox) = @_;
 	my $outer = $self->outer->fillClip1(@bbox);
-	return () unless defined $outer;
+	defined $outer or return ();
 
 	$self->new(
 		outer => $outer,
-		inner => [ map {$_->fillClip1(@bbox)} $self->inner ],
+		inner => [ map $_->fillClip1(@bbox), $self->inner ],
 	);
 }
 
@@ -186,11 +186,7 @@ line is the outer, the other lines represent the inner polygons.
 
 sub string()
 {	my $self = shift;
-	  "["
-	. join( "]\n-[",
-			$self->outer->string,
-			map $_->string, $self->inner)
-	. "]";
+	"[" . join( "]\n-[", $self->outer->string, (map $_->string, $self->inner)) . "]";
 }
 
 1;

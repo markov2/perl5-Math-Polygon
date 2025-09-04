@@ -184,10 +184,9 @@ sub polygon_start_minxy(@)
 	$rot==0 ? (@_, ($ring ? $_[0] : ())) : (@_[$rot..$#_], @_[0..$rot-1], ($ring ? $_[$rot] : ()));
 }
 
-=function polygon_beautify [\%options], @points
+=function polygon_beautify [%options|\%options], @points
 Polygons, certainly after some computations, can have a lot of
 horrible artifacts: points which are double, spikes, etc.
-The optional HASH contains the %options.
 
 =option  remove_spikes BOOLEAN
 =default remove_spikes <false>
@@ -201,10 +200,18 @@ removed.
 =cut
 
 sub polygon_beautify(@)
-{	my %opts     = ref $_[0] eq 'HASH' ? %{ (shift) } : ();
+{	my $args;
+	if(ref $_[0] eq 'HASH') { $args = shift }
+	else
+	{	while(@_ && !ref $_[0])
+		{	my $key       = shift;
+			$args->{$key} = shift;
+		}
+	}
+
 	@_ or return ();
 
-	my $despike  = exists $opts{remove_spikes} ? $opts{remove_spikes}  : 0;
+	my $despike  = exists $args->{remove_spikes} ? $args->{remove_spikes}  : 0;
 
 	my @res      = @_;
 	return () if @res < 4;  # closed triangle = 4 points
