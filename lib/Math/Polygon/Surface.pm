@@ -25,20 +25,20 @@ Math::Polygon::Surface - Polygon with exclusions
 
 =chapter DESCRIPTION
 
-A surface is one polygon which represents the outer bounds of an
-array, plus optionally a list of polygons which represent exclusions
-from that outer polygon.
+A surface is one polygon which represents the outer bounds of a shape,
+plus optionally a LIST of polygons which represent exclusions from that
+outer shape.
 
 =chapter METHODS
 
 =section Constructors
 
-=ci_method new [%options], [@polygons], %options
+=ci_method new [%options|\%options], [@polygons], %options
 You may merge %options with @polygons.  You may also use
 the "outer" and "inner" options.
 
-Each polygon is a references to an ARRAY of points, each an ARRAY of X
-and Y, but better pass Math::Polygon objects.
+Each polygon is a references to an ARRAY of points, each being an
+ARRAY of X and Y coordinate, but better pass Math::Polygon objects.
 
 =option  outer $polygon
 =default outer undef
@@ -54,17 +54,18 @@ The inner @polygons, zero or more Math::Polygon objects.
 sub new(@)
 {	my $thing = shift;
 	my $class = ref $thing || $thing;
-	my (@poly, %options);
+	my $args  = @_ && ref $_[0] eq 'HASH' ? shift : +{};
 
+	my @poly;
 	while(@_)
-	{	if(!ref $_[0]) { my $k = shift; $options{$k} = shift }
+	{	if(!ref $_[0]) { my $k = shift; $args->{$k} = shift }
 		elsif(ref $_[0] eq 'ARRAY')        { push @poly, shift }
 		elsif(blessed $_[0] && $_[0]->isa('Math::Polygon')) { push @poly, shift }
 		else { panic "illegal argument $_[0]" }
 	}
 
-	$options{_poly} = \@poly if @poly;
-	(bless {}, $class)->init(\%options);
+	$args->{_poly} = \@poly if @poly;
+	(bless {}, $class)->init($args);
 }
 
 sub init($$)
@@ -146,7 +147,7 @@ sub perimeter()
 =section Clipping
 
 =method lineClip $box
-Returned is a list of ARRAYS-OF-POINTS containing line pieces
+Returned is a LIST of ARRAY-of-POINTS containing line pieces
 from the input surface.  Lines from outer and inner polygons are
 undistinguishable.
 See method M<Math::Polygon::lineClip()>.

@@ -41,7 +41,7 @@ Math::Polygon::Calc - Simple polygon calculations
 
 =chapter SYNOPSIS
 
-  my @poly = ( [1,2], [2,4], [5,7], [1, 2] );
+  my @poly = ( [1,2], [2,4], [5,7], [1,2] );
 
   my ($xmin, $ymin, $xmax, $ymax) = polygon_bbox @poly;
 
@@ -50,6 +50,12 @@ Math::Polygon::Calc - Simple polygon calculations
   if(polygon_is_clockwise @poly) { ... };
 
   my @rot  = polygon_start_minxy @poly;
+
+  # The OO interface simplifies access:
+  my $poly = Math::Polygon->new(1,2], [2,4], [5,7], [1,2]);
+  my @box  = $poly->box;
+  my $area = $poly->area;
+  if($poly->isClockwise) { ... }
 
 =chapter DESCRIPTION
 

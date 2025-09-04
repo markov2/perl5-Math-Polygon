@@ -9,6 +9,9 @@ explicitly stated differently.
 
 version 2.01:
 
+	Fixes:
+	- the order of open polygons is the number of points.
+
 	Improvements:
 	- some more documentation and syntax tweaks
 

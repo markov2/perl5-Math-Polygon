@@ -22,9 +22,9 @@ Math::Polygon - Class for maintaining polygon data
 
 =chapter SYNOPSIS
 
-  my $poly = Math::Polygon->new( [1,2], [2,4], [5,7], [1,2] );
+  my $poly   = Math::Polygon->new([1,2], [2,4], [5,7], [1,2]);
   print $poly->nrPoints;
-  my @p    = $poly->points;
+  my @p      = $poly->points;
 
   my ($xmin, $ymin, $xmax, $ymax) = $poly->bbox;
 
@@ -122,17 +122,17 @@ sub init($$)
 =section Attributes
 
 =method nrPoints
-Returns the number of points,
+Returns the number of points.
 =cut
 
 sub nrPoints() { scalar @{ $_[0]->{MP_points}} }
 
 =method order
-Returns the number of (unique?) points: one less than M<nrPoints()>
-because we (usually) have a closed polygon.
+[2.01] Returns the number of (unique?) points: when the polygon is closed,
+it will return one less than M<nrPoints()>.
 =cut
 
-sub order() { @{ $_[0]->{MP_points}} -1 }
+sub order() { my $self = shift; $self->nrPoints - ($self->isClosed ? 1 : 0) }
 
 =method points [FORMAT]
 In LIST context, the points are returned as list, otherwise as
@@ -382,7 +382,7 @@ or not.  On the edge is inside.
 
 sub contains($)
 {	my ($self, $point) = @_;
-	polygon_contains_point($point, $self->points);
+	polygon_contains_point $point, $self->points;
 }
 
 =method distance $point
@@ -392,7 +392,7 @@ the polygon, zero if the point is on an edge.
 
 sub distance($)
 {	my ($self, $point) = @_;
-	polygon_distance($point, $self->points);
+	polygon_distance $point, $self->points;
 }
 
 =method isClosed
@@ -400,7 +400,7 @@ Returns true if the first point of the poly definition is the same
 as the last point.
 =cut
 
-sub isClosed() { polygon_is_closed($_[0]->points) }
+sub isClosed() { polygon_is_closed $_[0]->points }
 
 #--------------------
 =section Transformations
