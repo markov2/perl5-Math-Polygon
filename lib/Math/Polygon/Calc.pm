@@ -9,6 +9,10 @@ use parent 'Exporter';
 use strict;
 use warnings;
 
+use Log::Report   'math-polygon';
+use List::Util    qw/min max/;
+use Scalar::Util  qw/blessed/;
+
 our @EXPORT = qw/
 	polygon_area
 	polygon_bbox
@@ -28,8 +32,7 @@ our @EXPORT = qw/
 	polygon_format
 /;
 
-use Log::Report   'math-polygon';
-use List::Util    qw/min max/;
+sub polygon_is_closed(@);
 
 #--------------------
 =chapter NAME
@@ -392,7 +395,7 @@ sub polygon_contains_point($@)
 	$inside;
 }
 
-=function polygon_centroid @points
+=function polygon_centroid [%options|\%options], @points
 Returns the centroid location of the polygon.
 
 The last point of the list must be the same as the first (must be
@@ -402,24 +405,45 @@ B<warning:> When the polygon is very flat, it will not produce a
 stable result: minor changes in single coordinates will move the
 centroid too far.
 
-B<warning:> When the polygon is very small and/or far from the origin
-C<(0,0)>, (as often happens when processing geo coordinates) then rounding
-errors will have a large impact.  In this case, either move the polygon
-closer to the origin first, or use Math::BigFloat coordinates.
-
 The algorithm was found at
 L<https://en.wikipedia.org/wiki/Centroid#Of_a_polygon>
+
+=option  is_large BOOLEAN
+=default is_large false
+When the polygon is small and far from the origin C<(0,0)> (as often
+happens when processing geo coordinates), then rounding errors will have a
+large impact on result of the algorithm.  To avoid this, we will move the
+poly first close to the origin, and move the calculated center point back.
+
+This transform, which cost modest performance, can be disabled with
+this option.  The transformation will also not happen when the first
+C<x> coordinate is an object, like Math::BigFloat.
 
 =error polygon points on a line, so no centroid
 =cut
 
 sub polygon_centroid(@)
-{
-	polygon_is_closed(@_)
+{	my $args;
+	if(ref $_[0] eq 'HASH') { $args = shift }
+	else
+	{	while(@_ && !ref $_[0])
+		{	my $key       = shift;
+			$args->{$key} = shift;
+		}
+	}
+
+	polygon_is_closed @_
 		or error __"polygon must be closed: begin==end";
 
 	return [ ($_[0][0] + $_[1][0])/2, ($_[0][1] + $_[1][1])/2 ]
 		if @_==3;  # line
+
+	my $correct   = exists $args->{is_large} ? $args->{is_large} : blessed($_[0][0]);
+	my ($mx, $my) = $correct ? (0, 0) : @{$_[0]};
+	my $do_move   = $mx != 0 || $my != 0;
+
+	@_ = map [ $_->[0] - $mx, $_->[1] - $my ], @_
+		if $do_move;
 
 	my ($cx, $cy, $a) = (0, 0, 0);
 	foreach my $i (0..@_-2)
@@ -433,7 +457,7 @@ sub polygon_centroid(@)
 		or error __"polygon points on a line, so no centroid";
 
 	my $c = 3*$a; # 6*$a/2;
-	[ $cx/$c, $cy/$c ];
+	$do_move ? [ $cx/$c + $mx, $cy/$c + $my ] : [ $cx/$c, $cy/$c ];
 }
 
 =function polygon_is_closed @points
@@ -504,7 +528,7 @@ sub polygon_distance($%)
 is especially useful to reduce the number of digits in the stringification.
 For instance, when you want reproducible results in regression scripts.
 
-The format is anything supported by printf(), for instance "%5.2f".  Or,
+The format is anything supported by C<printf()>, for instance C<"%5.2f">.  Or,
 you can pass a code reference which accepts a single value.
 =cut
 

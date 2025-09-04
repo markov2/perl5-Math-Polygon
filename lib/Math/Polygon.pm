@@ -212,14 +212,18 @@ sub area()
 	$self->{MP_area} = polygon_area $self->points;
 }
 
-=method centroid
+=method centroid %options
 Returns the centroid location of the polygon.  The last point of the list
 must be the same as the first to produce a correct result.  The computed
 result is cached.  Function M<Math::Polygon::Calc::polygon_centroid()>.
 
-B<Be aware> that this algorithm does not like very flat polygons.  Also,
-small polygons far from the origin (typical in geo applications) will
-suffer from rounding errors: translate them to the origin first.
+B<Be aware> that this algorithm does not like very flat polygons.
+
+=option  is_large BOOLEAN
+=default is_large false
+[2.00] When the polygon is large with respect to its distance to the
+origin, we do not need to be afraid for rounding errors.  When set,
+the calculation will be a bit faster.
 
 =example
   my $center = $poly->centroid;
@@ -227,9 +231,9 @@ suffer from rounding errors: translate them to the origin first.
 
 =cut
 
-sub centroid()
-{	my $self = shift;
-	$self->{MP_centroid} //= polygon_centroid $self->points;
+sub centroid(%)
+{	my ($self, %args) = @_;
+	$self->{MP_centroid} //= polygon_centroid \%args, $self->points;
 }
 
 =method isClockwise

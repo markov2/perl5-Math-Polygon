@@ -19,7 +19,7 @@ version 2.00:
 	  rt.cpan.org#169305 [Graham Knop]
 
 	Improvements:
-	- warn about the instability of centroid.
+	- reduce rounding errors in centroid by default
 	  rt.cpan.org#169306 [Graham Knop]
 	- tip use of Math::BigFloat
 	- restyle code and docs to match OODoc 2.03
