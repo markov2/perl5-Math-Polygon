@@ -3,6 +3,7 @@ use ExtUtils::MakeMaker;
 require 5.016;
 
 # Use command 'oodist' to produce your whole software release.
+my $version  = '2.01';
 my $git      = "https://github.com/markov2/perl5-Math-Polygon";
 my $publish  = "../public_html/math-polygon";
 my $homepage = "http://perl.overmeer.net/CPAN/";
@@ -47,7 +48,7 @@ my %oodist   = (
 
 WriteMakefile
 	NAME        => 'Math::Polygon',
-	VERSION     => '2.00',
+	VERSION     => $version,
 	PREREQ_PM   => {
 		Test::More    => 0.47,
 		Scalar::Util  => 1.13,
